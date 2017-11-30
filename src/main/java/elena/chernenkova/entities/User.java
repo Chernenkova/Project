@@ -1,4 +1,7 @@
-package elena.chernenkova.model.security;
+package elena.chernenkova.entities;
+
+import elena.chernenkova.model.security.Authority;
+import elena.chernenkova.model.security.UserWrapper;
 
 import java.util.Date;
 import java.util.List;
@@ -24,7 +27,7 @@ public class User {
 
     @Id
     @Column(name = "ID")
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long userId;
 
     @Column(name = "LOGIN", length = 50, unique = true)
@@ -83,7 +86,8 @@ public class User {
         this.lastPasswordResetDate = toDate(userWrapper.getLastPasswordResetDate());
     }
 
-    public User() {}
+    public User() {
+    }
 
     public Long getUserId() {
         return userId;
@@ -165,7 +169,7 @@ public class User {
         this.authorities = authorities;
     }
 
-    public static Date toDate(String dateString){
+    public static Date toDate(String dateString) {
         String[] a = dateString.split(" ");
         Date date = new Date();
         date.setYear(Integer.parseInt(a[0]) - 1900);

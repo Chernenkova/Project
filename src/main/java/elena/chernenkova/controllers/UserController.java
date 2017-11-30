@@ -1,9 +1,10 @@
-package elena.chernenkova.security.controller;
+package elena.chernenkova.controllers;
 
 import elena.chernenkova.model.security.UserEnterWrapper;
 import elena.chernenkova.model.security.UserWrapper;
 import elena.chernenkova.security.JwtTokenUtil;
 import elena.chernenkova.security.JwtUser;
+import elena.chernenkova.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -12,13 +13,11 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
-/**
- * Created by 123 on 03.11.2017.
- */
+
 @RestController
 @RequestMapping("/welcome")
 public class UserController {
-    private  UserService userService;
+    private UserService userService;
     private JwtTokenUtil jwtTokenUtil;
     private UserDetailsService userDetailsService;
 
@@ -38,8 +37,7 @@ public class UserController {
         System.out.println(input);
         String username = jwtTokenUtil.getUsernameFromToken(input);
         System.out.println("username" + username);
-        JwtUser user = (JwtUser) userDetailsService.loadUserByUsername(username);
-        return user;
+        return (JwtUser) userDetailsService.loadUserByUsername(username);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{userId}")

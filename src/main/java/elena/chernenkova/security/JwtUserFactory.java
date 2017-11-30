@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import elena.chernenkova.model.security.Authority;
-import elena.chernenkova.model.security.User;
+import elena.chernenkova.entities.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 

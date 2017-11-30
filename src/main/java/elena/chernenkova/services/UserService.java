@@ -1,11 +1,11 @@
-package elena.chernenkova.security.controller;
+package elena.chernenkova.services;
 
 import elena.chernenkova.common.utils.TimeProvider;
-import elena.chernenkova.model.security.User;
+import elena.chernenkova.entities.User;
 import elena.chernenkova.model.security.UserEnterWrapper;
 import elena.chernenkova.model.security.UserWrapper;
 import elena.chernenkova.security.JwtUser;
-import elena.chernenkova.security.repository.UserRepository;
+import elena.chernenkova.repositories.UserRepository;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -15,7 +15,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -23,9 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-/**
- * Created by 123 on 03.11.2017.
- */
 @Service
 public class UserService {
     private final UserRepository userRepository;
@@ -44,29 +40,29 @@ public class UserService {
         this.timeProvider = timeProvider;
     }
 
-    public ResponseEntity getUser(Long userId){
-        return new ResponseEntity(userRepository.findFirstByUserId(userId), HttpStatus.OK);
+    public ResponseEntity<User> getUser(Long userId){
+        return new ResponseEntity<>(userRepository.findFirstByUserId(userId), HttpStatus.OK);
     }
 
-    public ResponseEntity getAllUsers(){
-        return new ResponseEntity(userRepository.findAll(new Sort("username")), HttpStatus.OK);
+    public ResponseEntity<Iterable<User>> getAllUsers(){
+        return new ResponseEntity<>(userRepository.findAll(new Sort("username")), HttpStatus.OK);
     }
 
-    public ResponseEntity createUser(UserWrapper userWrapper){
+    public ResponseEntity<User> createUser(UserWrapper userWrapper){
         User newUser = new User(userWrapper);
-        userRepository.save(newUser);
-        return new ResponseEntity(newUser, HttpStatus.CREATED);
+        newUser = userRepository.save(newUser);
+        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
 
-    public ResponseEntity authenticateUser(UserEnterWrapper userEnterWrapper,
+    public ResponseEntity<String> authenticateUser(UserEnterWrapper userEnterWrapper,
                                            UserDetailsService userDetailsService){
         Long id = ((JwtUser) userDetailsService.loadUserByUsername(userEnterWrapper.getUsername())).getId();
-        User user = (User)getUser(id).getBody();
+        User user = getUser(id).getBody();
         if(user.getUserPassword().equals(userEnterWrapper.getUserPassword())){
-            return new ResponseEntity(getToken(user), HttpStatus.OK);
+            return new ResponseEntity<>(getToken(user), HttpStatus.OK);
         }
         else
-            return new ResponseEntity(HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
     public ResponseEntity updateUser(UserWrapper userWrapper, Long userId){
@@ -77,10 +73,10 @@ public class UserService {
         currentUser.setFirstname(userWrapper.getUserFirstname());
         currentUser.setLastname(userWrapper.getUserLastname());
         userRepository.saveAndFlush(currentUser);
-        return new ResponseEntity(currentUser, HttpStatus.OK);
+        return new ResponseEntity<>(currentUser, HttpStatus.OK);
     }
 
-    public String getToken(User user){
+    private String getToken(User user){
         String token = "";
         try {
             Date currentDate = timeProvider.now();

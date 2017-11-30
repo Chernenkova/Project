@@ -1,5 +1,7 @@
 package elena.chernenkova.model.security;
 
+import elena.chernenkova.entities.User;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.List;

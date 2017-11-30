@@ -1,12 +1,8 @@
-package elena.chernenkova.security.repository;
+package elena.chernenkova.repositories;
 
-import elena.chernenkova.model.security.User;
+import elena.chernenkova.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-
-/**
- * Created by stephan on 20.03.16.
- */
 public interface UserRepository extends JpaRepository<User, Long> {
     User findByUsername(String username);
     User findFirstByUserId(Long userId);
