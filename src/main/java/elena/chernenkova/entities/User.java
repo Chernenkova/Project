@@ -77,6 +77,7 @@ public class User {
 
     public User(UserWrapper userWrapper) {
         this.username = userWrapper.getUsername();
+        //TODO: add MD5 hash function
         this.userPassword = userWrapper.getUserPassword();
         this.firstname = userWrapper.getUserFirstname();
         this.lastname = userWrapper.getUserLastname();

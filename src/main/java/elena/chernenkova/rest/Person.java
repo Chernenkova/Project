@@ -1,8 +1,6 @@
 package elena.chernenkova.rest;
 
-/**
- * Created by stephan on 11.03.16.
- */
+
 public class Person {
     private String name;
     private String email;

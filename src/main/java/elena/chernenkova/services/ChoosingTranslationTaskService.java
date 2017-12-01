@@ -30,8 +30,7 @@ public class ChoosingTranslationTaskService {
 
     public ResponseEntity<TaskEntity> addTask(ChoosingTranslationTaskWrapper wrapper){
         ChoosingTranslationTaskSerializerWrapper c = new ChoosingTranslationTaskSerializerWrapper(wrapper.getCardsIds());
-        byte[] bytes = Serializer.getBytes(c);
-
+        byte[] bytes = JsonClassParser.getBytes(c);
         TaskEntity task = new TaskEntity(GeneralSettings.CHOOSING_TASK_BASIC_TYPE, bytes, null);
         taskRepository.save(task);
         return new ResponseEntity<>(task, HttpStatus.OK);
@@ -51,8 +50,7 @@ public class ChoosingTranslationTaskService {
         if(task == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
-        ChoosingTranslationTaskSerializerWrapper c = (ChoosingTranslationTaskSerializerWrapper) Serializer.toObject(task.getTask());
+        ChoosingTranslationTaskSerializerWrapper c = JsonClassParser.getObject(task.getTask(), ChoosingTranslationTaskSerializerWrapper.class);
         ChoosingTranslationTaskWrapper wrapper = new ChoosingTranslationTaskWrapper(c.getCardsIds());
         return new ResponseEntity<>(wrapper, HttpStatus.OK);
     }
@@ -86,7 +84,7 @@ public class ChoosingTranslationTaskService {
     }
 
     private ResponseEntity<ChoosingTranslationWrapper> getBasicTask(TaskEntity task){
-        ChoosingTranslationTaskSerializerWrapper c1 = (ChoosingTranslationTaskSerializerWrapper) Serializer.toObject(task.getTask());
+        ChoosingTranslationTaskSerializerWrapper c1 = JsonClassParser.getObject(task.getTask(), ChoosingTranslationTaskSerializerWrapper.class);
 
         //Getting cards which will be used in task
         List<CardEntity> cards = new ArrayList<>();

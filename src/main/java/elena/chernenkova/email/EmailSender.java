@@ -12,6 +12,10 @@ public class EmailSender extends Thread{
         this.message = message;
     }
 
+    public void send(){
+        this.start();
+    }
+
     @Override
     public void run() {
         SendEmail sendEmail = new SendEmail(emailTo, theme);
