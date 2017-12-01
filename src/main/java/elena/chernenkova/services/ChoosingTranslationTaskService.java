@@ -97,6 +97,7 @@ public class ChoosingTranslationTaskService {
     }
 
     private ResponseEntity<ChoosingTranslationWrapper> getAdvancedTask(TaskEntity task){
+        //TODO: implements this method
         return null;
     }
 
@@ -164,6 +165,7 @@ public class ChoosingTranslationTaskService {
     }
 
     public ResponseEntity createAdvancedTask(AdvancedTaskWrapper wrapper){
+        //TODO: implements this method
         return null;
     }
 }

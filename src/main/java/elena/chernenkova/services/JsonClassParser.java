@@ -17,7 +17,7 @@ public class JsonClassParser {
         return null;
     }
 
-    static <T> T getObject(byte[] bytes, Class<T> clazz) {
+   static <T> T getObject(byte[] bytes, Class<T> clazz) {
         ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.readValue(bytes, clazz);
