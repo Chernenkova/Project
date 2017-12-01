@@ -6,6 +6,7 @@ import elena.chernenkova.model.security.UserEnterWrapper;
 import elena.chernenkova.model.security.UserWrapper;
 import elena.chernenkova.security.JwtUser;
 import elena.chernenkova.repositories.UserRepository;
+import elena.chernenkova.wrappers.login.TokenWrapper;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -54,12 +55,12 @@ public class UserService {
         return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
 
-    public ResponseEntity<String> authenticateUser(UserEnterWrapper userEnterWrapper,
-                                           UserDetailsService userDetailsService){
+    public ResponseEntity<TokenWrapper> authenticateUser(UserEnterWrapper userEnterWrapper,
+                                                         UserDetailsService userDetailsService){
         Long id = ((JwtUser) userDetailsService.loadUserByUsername(userEnterWrapper.getUsername())).getId();
         User user = getUser(id).getBody();
         if(user.getUserPassword().equals(userEnterWrapper.getUserPassword())){
-            return new ResponseEntity<>(getToken(user), HttpStatus.OK);
+            return new ResponseEntity<>(new TokenWrapper(getToken(user)), HttpStatus.OK);
         }
         else
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
@@ -100,3 +101,4 @@ public class UserService {
         return new Date(createdDate.getTime() + expiration * 1000);
     }
 }
+//local storage
