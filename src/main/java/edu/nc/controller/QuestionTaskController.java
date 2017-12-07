@@ -1,10 +1,10 @@
-package elena.chernenkova.controllers;
+package edu.nc.controller;
 
 
 import edu.nc.common.GeneralSettings;
-import elena.chernenkova.services.QuestionTaskService;
-import elena.chernenkova.wrappers.questiontask.CreateQuestionTaskWrapper;
-import elena.chernenkova.wrappers.questiontask.QuestionTaskWrapper;
+import edu.nc.service.QuestionTaskService;
+import edu.nc.dataaccess.wrapper.questiontask.CreateQuestionTaskWrapper;
+import edu.nc.dataaccess.wrapper.questiontask.QuestionTaskWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

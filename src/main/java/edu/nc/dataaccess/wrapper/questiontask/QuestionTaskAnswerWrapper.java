@@ -1,4 +1,4 @@
-package elena.chernenkova.wrappers.questiontask;
+package edu.nc.dataaccess.wrapper.questiontask;
 
 public class QuestionTaskAnswerWrapper {
     private QuestionAnswerWrapper[] qa;

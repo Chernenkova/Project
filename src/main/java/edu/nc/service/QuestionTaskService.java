@@ -1,9 +1,10 @@
-package elena.chernenkova.services;
+package edu.nc.service;
 
-import elena.chernenkova.common.GeneralSettings;
-import elena.chernenkova.entities.TaskEntity;
-import elena.chernenkova.repositories.TaskRepository;
-import elena.chernenkova.wrappers.questiontask.*;
+
+import edu.nc.common.GeneralSettings;
+import edu.nc.dataaccess.entity.TaskEntity;
+import edu.nc.dataaccess.repository.TaskRepository;
+import edu.nc.dataaccess.wrapper.questiontask.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

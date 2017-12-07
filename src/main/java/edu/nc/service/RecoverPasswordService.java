@@ -39,10 +39,9 @@ public class RecoverPasswordService {
 
     /**
      * finds user by username (email) and adds it into DB and send an email notification
-     *
+     * @see RecoverEntity
      * @param wrapper contains email string
      * @return OK status
-     * @see RecoverEntity
      */
     public ResponseEntity requestOnRecovering(EmailWrapper wrapper) {
         User user = userRepository.findByUsername(wrapper.getEmail());
@@ -70,7 +69,6 @@ public class RecoverPasswordService {
 
     /**
      * checks the validity of request on recover using UUID and recovers password
-     *
      * @param wrapper contains password string
      * @param uuid    - path variable in request. unique for every person
      * @return OK status
@@ -90,6 +88,8 @@ public class RecoverPasswordService {
                     return new ResponseEntity(HttpStatus.OK);
 
                 }
+            }else{
+                //TODO: removing. Timeout
             }
         }
         return new ResponseEntity(HttpStatus.BAD_REQUEST);

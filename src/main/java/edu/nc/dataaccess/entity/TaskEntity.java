@@ -3,6 +3,7 @@ package edu.nc.dataaccess.entity;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 
 @Entity
 public class TaskEntity {
@@ -11,7 +12,9 @@ public class TaskEntity {
     private Long id;
 
     private String type;
+    @Lob
     private byte[] task;
+    @Lob
     private byte[] answer;
 
     public TaskEntity(String type, byte[] task, byte[] answer) {
