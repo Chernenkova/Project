@@ -1,9 +1,10 @@
 package elena.chernenkova.entities;
 
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import org.hibernate.annotations.Type;
+
+import javax.persistence.*;
+import java.sql.Blob;
 
 @Entity
 public class TaskEntity {
@@ -12,7 +13,9 @@ public class TaskEntity {
     private Long id;
 
     private String type;
+    @Lob
     private byte[] task;
+    @Lob
     private byte[] answer;
 
     public TaskEntity(String type, byte[] task, byte[] answer) {

@@ -89,6 +89,8 @@ public class RecoverPasswordService {
                     return new ResponseEntity(HttpStatus.OK);
 
                 }
+            }else{
+                //TODO: removing. Timeout
             }
         }
         return new ResponseEntity(HttpStatus.BAD_REQUEST);

@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = GeneralSettings.CHOOSING_TRANSLATION_TASK)
 public class ChoosingTranslationTaskController {
 
-
     private ChoosingTranslationTaskService service;
 
     @Autowired
