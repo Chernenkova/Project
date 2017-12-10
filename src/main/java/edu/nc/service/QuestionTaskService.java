@@ -10,6 +10,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 @Component
 public class QuestionTaskService {
 
@@ -28,10 +32,9 @@ public class QuestionTaskService {
      * @return OK status
      */
     public ResponseEntity addTask(CreateQuestionTaskWrapper wrapper){
-        //TODO: add UUID to question.
-        QuestionWrapper[] qArray = new QuestionWrapper[wrapper.getQuestions().length];
+                QuestionWrapper[] qArray = new QuestionWrapper[wrapper.getQuestions().length];
         for (int i = 0; i < qArray.length; i++) {
-            qArray[i] = new QuestionWrapper(wrapper.getQuestions()[i].getQuestion(),
+            qArray[i] = new QuestionWrapper(UUID.randomUUID().toString(), wrapper.getQuestions()[i].getQuestion(),
                     wrapper.getQuestions()[i].getPossibleAnswers());
         }
         QuestionTaskWrapper questionTaskWrapper = new QuestionTaskWrapper(wrapper.getText(),qArray);
@@ -40,7 +43,7 @@ public class QuestionTaskService {
         QuestionWithAnswerWrapper[] array = wrapper.getQuestions();
         QuestionAnswerWrapper[] qaArray = new QuestionAnswerWrapper[array.length];
         for (int i = 0; i < qaArray.length; i++) {
-            qaArray[i] = new QuestionAnswerWrapper(array[i].getQuestion(), array[i].getAnswer());
+            qaArray[i] = new QuestionAnswerWrapper(qArray[i].getQuestionUUID(), array[i].getAnswer());
         }
         byte[] answerBytes = JsonClassParser.getBytes(new QuestionTaskAnswerWrapper(qaArray));
 
@@ -50,16 +53,65 @@ public class QuestionTaskService {
     }
 
     /**
-     *
-     * @param id
-     * @return task and OK status if
+     * @param id    - task ID in DB
+     * @return task and OK status if there is task in DB
+     *                  NOT_FOUND if there is no task in DB
+     *                  BAD_REQUEST if task has wrong TYPE
      */
     public ResponseEntity<QuestionTaskWrapper> get(Long id){
-        TaskEntity entity = taskRepository.getOne(id);
+        TaskEntity entity = taskRepository.findOne(id);
+        if(null == entity){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         if(GeneralSettings.QUESTION_TASK_TYPE.equals(entity.getType())){
             QuestionTaskWrapper task = JsonClassParser.getObject(entity.getTask(), QuestionTaskWrapper.class);
             return new ResponseEntity<>(task, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+
+    /**
+     * compare user's answers with ones in DB
+     * @param id        - task ID in DB
+     * @param wrapper   - contains questions UUIDs and user's chosen answers (text)
+     * @return wrapper, which contains  -totalScore (max possible for task)
+     *                                  -score (quantity of correct answers)
+     *                                  -correct answers (question UUID amd answer)
+     *
+     *                  OK status if there is task in DB
+     *                  NOT_FOUND if there is no task in DB
+     *                  BAD_REQUEST if task has wrong TYPE
+     */
+    public ResponseEntity<QuestionResult> check(Long id, QuestionTaskAnswerWrapper wrapper){
+        //get task from DB
+        TaskEntity entity = taskRepository.findOne(id);
+        if(entity == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        if(!entity.getType().equalsIgnoreCase(GeneralSettings.QUESTION_TASK_TYPE)){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        QuestionTaskAnswerWrapper correct = JsonClassParser.getObject(entity.getAnswer(), QuestionTaskAnswerWrapper.class);
+
+        Map<String, String> correctMap = new HashMap<>();
+        for (int i = 0; i < correct.getQa().length; i++) {
+            correctMap.put( correct.getQa()[i].getQuestionUUID(),
+                            correct.getQa()[i].getAnswer());
+        }
+        //response processing
+        int totalScore = correctMap.size();
+        int score = 0;
+        for (int i = 0; i < wrapper.getQa().length; i++) {
+            QuestionAnswerWrapper current = wrapper.getQa()[i];
+            if(current.getAnswer().equalsIgnoreCase(correctMap.get(current.getQuestionUUID()))){
+                score++;
+            }
+        }
+        //TODO: update data in DB
+        QuestionResult result = new QuestionResult(totalScore, score, correct);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+
     }
 }

@@ -1,8 +1,6 @@
 package edu.nc.dataaccess.model.security;
 
-/**
- * Created by 123 on 03.11.2017.
- */
+
 public class UserWrapper {
     private String username;
     private String userPassword;
@@ -11,7 +9,16 @@ public class UserWrapper {
     private String userDateOfBirth;
     private Integer userRaiting;
     private Boolean enabled;
-    private String lastPasswordResetDate;
+
+    public UserWrapper(String username, String userPassword, String userFirstname, String userLastname, String userDateOfBirth, Integer userRaiting, Boolean enabled) {
+        this.username = username;
+        this.userPassword = userPassword;
+        this.userFirstname = userFirstname;
+        this.userLastname = userLastname;
+        this.userDateOfBirth = userDateOfBirth;
+        this.userRaiting = userRaiting;
+        this.enabled = enabled;
+    }
 
     public UserWrapper() {
     }
@@ -72,11 +79,4 @@ public class UserWrapper {
         this.enabled = enabled;
     }
 
-    public String getLastPasswordResetDate() {
-        return lastPasswordResetDate;
-    }
-
-    public void setLastPasswordResetDate(String lastPasswordResetDate) {
-        this.lastPasswordResetDate = lastPasswordResetDate;
-    }
 }

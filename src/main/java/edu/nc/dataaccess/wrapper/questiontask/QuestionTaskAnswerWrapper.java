@@ -3,6 +3,9 @@ package edu.nc.dataaccess.wrapper.questiontask;
 public class QuestionTaskAnswerWrapper {
     private QuestionAnswerWrapper[] qa;
 
+    public QuestionTaskAnswerWrapper() {
+    }
+
     public QuestionTaskAnswerWrapper(QuestionAnswerWrapper[] qa) {
         this.qa = qa;
     }

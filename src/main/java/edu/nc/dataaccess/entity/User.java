@@ -3,21 +3,11 @@ package edu.nc.dataaccess.entity;
 import edu.nc.dataaccess.model.security.Authority;
 import edu.nc.dataaccess.model.security.UserWrapper;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -74,17 +64,19 @@ public class User {
             inverseJoinColumns = {@JoinColumn(name = "AUTHORITY_ID", referencedColumnName = "ID")})
     private List<Authority> authorities;
 
+    @OneToMany
+    private List<TaskProgressEntity> tasks = new ArrayList<>();
+
 
     public User(UserWrapper userWrapper) {
         this.username = userWrapper.getUsername();
-        //TODO: add MD5 hash function
         this.userPassword = userWrapper.getUserPassword();
         this.firstname = userWrapper.getUserFirstname();
         this.lastname = userWrapper.getUserLastname();
         this.dateofbirth = toDate(userWrapper.getUserDateOfBirth());
         this.raiting = userWrapper.getUserRaiting();
         this.enabled = userWrapper.getEnabled();
-        this.lastPasswordResetDate = toDate(userWrapper.getLastPasswordResetDate());
+        this.lastPasswordResetDate = new Date();
     }
 
     public User() {
@@ -168,6 +160,14 @@ public class User {
 
     public void setAuthorities(List<Authority> authorities) {
         this.authorities = authorities;
+    }
+
+    public List<TaskProgressEntity> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<TaskProgressEntity> tasks) {
+        this.tasks = tasks;
     }
 
     public static Date toDate(String dateString) {

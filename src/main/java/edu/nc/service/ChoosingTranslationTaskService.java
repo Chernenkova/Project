@@ -65,7 +65,7 @@ public class ChoosingTranslationTaskService {
         if (task.getType().equalsIgnoreCase(GeneralSettings.CHOOSING_TASK_ADVANCED_TYPE)) {
             return getAdvancedTask(task);
         }
-        return null;
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     public ResponseEntity<CardResponseWrapper> checkTranslation(CardWrapperIdAndTranslation wrapper) {

@@ -1,7 +1,11 @@
 package edu.nc.service;
 
+import edu.nc.dataaccess.entity.RegUserEntity;
 import edu.nc.dataaccess.entity.User;
 import edu.nc.dataaccess.model.security.UserEnterWrapper;
+import edu.nc.dataaccess.repository.RegistrationRepository;
+import edu.nc.dataaccess.wrapper.registration.LoginAndPassword;
+import edu.nc.dataaccess.wrapper.registration.PersonalData;
 import edu.nc.security.JwtUser;
 import edu.nc.dataaccess.wrapper.login.TokenWrapper;
 import edu.nc.common.utils.TimeProvider;
@@ -21,10 +25,21 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private RegistrationRepository registrationRepository;
+
+    private static final String EMAIL_REGULAR_EXPRESSION = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+
+    private static final String REGISTRATION_THEME = "Registration";
+
+
+    private static final long DELAY_TO_CONFIRM = 1000 * 3600 * 3;
 
     @Value("${jwt.secret}")
     private String secret;
@@ -35,9 +50,10 @@ public class UserService {
     private TimeProvider timeProvider;
 
     @Autowired
-    public UserService(UserRepository userRepository, TimeProvider timeProvider) {
+    public UserService(UserRepository userRepository, TimeProvider timeProvider, RegistrationRepository registrationRepository) {
         this.userRepository = userRepository;
         this.timeProvider = timeProvider;
+        this.registrationRepository = registrationRepository;
     }
 
     public ResponseEntity<User> getUser(Long userId) {
@@ -94,8 +110,53 @@ public class UserService {
         return token;
     }
 
+    /**
+     * adds the entry into DB and send the E'mail on login
+     * @param wrapper - contains email and password to create Entity
+     * @return -    BAD_REQUEST, if e-mail pattern is incorrect
+     *              OK
+     */
+    public ResponseEntity registerUser(LoginAndPassword wrapper){
+        Pattern p = Pattern.compile(EMAIL_REGULAR_EXPRESSION);
+        Matcher m = p.matcher(wrapper.getLogin());
+        if(!m.matches()){
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+        //find the same entry
+        Optional<RegUserEntity> optionalRegUserEntity = registrationRepository.findByLogin(wrapper.getLogin());
+        //delete the entry
+        optionalRegUserEntity.ifPresent(regUserEntity -> registrationRepository.delete(regUserEntity.getId()));
+
+        RegUserEntity entity = new RegUserEntity(wrapper.getLogin(), wrapper.getPassword());
+        String secret = entity.getUuid();
+        registrationRepository.saveAndFlush(entity);
+
+        EmailSender sender = new EmailSender(wrapper.getLogin(), REGISTRATION_THEME, secret);
+        sender.send();
+
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    public ResponseEntity confirmRegistration(String uuid, PersonalData wrapper){
+        Optional<RegUserEntity> optionalRegUserEntity = registrationRepository.findByUuid(uuid);
+        if(!optionalRegUserEntity.isPresent()){
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+        RegUserEntity current = optionalRegUserEntity.get();
+        if(new Date().getTime() - current.getDate().getTime() > DELAY_TO_CONFIRM){
+            return new ResponseEntity(HttpStatus.REQUEST_TIMEOUT);
+        }
+        registrationRepository.delete(current.getId());
+        return this.createUser(new UserWrapper( current.getLogin(),
+                                                current.getPasswordHash(),
+                                                wrapper.getUserFirstname(),
+                                                wrapper.getUserLastname(),
+                                                wrapper.getUserDateOfBirth(),
+                                                0,
+                                                true));
+    }
+
     private Date calculateExpirationDate(Date createdDate) {
         return new Date(createdDate.getTime() + expiration * 1000);
     }
 }
-//local storage

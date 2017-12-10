@@ -2,6 +2,8 @@ package edu.nc.controller;
 
 import edu.nc.dataaccess.model.security.UserEnterWrapper;
 import edu.nc.dataaccess.model.security.UserWrapper;
+import edu.nc.dataaccess.wrapper.registration.LoginAndPassword;
+import edu.nc.dataaccess.wrapper.registration.PersonalData;
 import edu.nc.security.JwtTokenUtil;
 import edu.nc.security.JwtUser;
 import edu.nc.service.UserService;
@@ -63,6 +65,16 @@ public class UserController {
     @RequestMapping(method = RequestMethod.PUT, value = "/{userId}")
     public ResponseEntity updateUser(@RequestBody UserWrapper userWrapper, @PathVariable Long userId) {
         return userService.updateUser(userWrapper, userId);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/register")
+    public ResponseEntity registerUser(@RequestBody LoginAndPassword wrapper){
+        return userService.registerUser(wrapper);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/confirm/{uuid}")
+    public ResponseEntity confirmRegistration(@PathVariable String uuid, @RequestBody PersonalData wrapper){
+        return userService.confirmRegistration(uuid, wrapper);
     }
 
 }

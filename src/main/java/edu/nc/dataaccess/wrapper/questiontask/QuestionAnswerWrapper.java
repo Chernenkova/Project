@@ -1,23 +1,23 @@
 package edu.nc.dataaccess.wrapper.questiontask;
 
 public class QuestionAnswerWrapper {
-    private String question;
+    private String questionUUID;
     private String answer;
-
-    public QuestionAnswerWrapper(String question, String answer) {
-        this.question = question;
-        this.answer = answer;
-    }
 
     public QuestionAnswerWrapper() {
     }
 
-    public String getQuestion() {
-        return question;
+    public QuestionAnswerWrapper(String questionUUID, String answer) {
+        this.questionUUID = questionUUID;
+        this.answer = answer;
     }
 
-    public void setQuestion(String question) {
-        this.question = question;
+    public String getQuestionUUID() {
+        return questionUUID;
+    }
+
+    public void setQuestionUUID(String questionUUID) {
+        this.questionUUID = questionUUID;
     }
 
     public String getAnswer() {
