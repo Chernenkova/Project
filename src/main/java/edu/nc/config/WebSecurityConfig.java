@@ -62,6 +62,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
+
         httpSecurity
                 // we don't need CSRF because our token is invulnerable
                 .csrf().disable()
@@ -84,12 +85,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.css",
                         "/**/*.js"
                 ).permitAll()
+                .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .antMatchers("/auth/**").permitAll()
                 .antMatchers("/welcome/**").permitAll()
                 .antMatchers("/recover-password/**").permitAll()
                 //TODO: delete lines that are used only for testing
 //                .antMatchers("/cards/**").permitAll()
                 .antMatchers("/choosing-translation/**").permitAll()
+//                .antMatchers("/questions-text/**").permitAll()
                 .anyRequest().authenticated();
 
         // Custom JWT based security filter

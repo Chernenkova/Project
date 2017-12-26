@@ -105,7 +105,7 @@ public class QuestionTaskService {
         int score = 0;
         for (int i = 0; i < wrapper.getQa().length; i++) {
             QuestionAnswerWrapper current = wrapper.getQa()[i];
-            if(current.getAnswer().equalsIgnoreCase(correctMap.get(current.getQuestionUUID()))){
+            if(current.getAnswer()!= null && current.getAnswer().equalsIgnoreCase(correctMap.get(current.getQuestionUUID()))){
                 score++;
             }
         }
