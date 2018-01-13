@@ -53,7 +53,7 @@ public class UserController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity createUser(@RequestBody UserWrapper userWrapper) {
+    public ResponseEntity createUser(@RequestBody UserEnterWrapper userWrapper) {
         return userService.createUser(userWrapper);
     }
 

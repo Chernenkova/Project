@@ -1,6 +1,7 @@
 package edu.nc.dataaccess.entity;
 
 import edu.nc.dataaccess.model.security.Authority;
+import edu.nc.dataaccess.model.security.UserEnterWrapper;
 import edu.nc.dataaccess.model.security.UserWrapper;
 
 import java.util.ArrayList;
@@ -63,7 +64,7 @@ public class User {
     private List<TaskProgressEntity> tasks = new ArrayList<>();
 
 
-    public User(UserWrapper userWrapper) {
+    public User(UserEnterWrapper userWrapper) {
         this.username = userWrapper.getUsername();
         this.userPassword = userWrapper.getUserPassword();
         this.firstname = "Unknown";

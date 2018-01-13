@@ -64,7 +64,7 @@ public class UserService {
         return new ResponseEntity<>(userRepository.findAll(new Sort("username")), HttpStatus.OK);
     }
 
-    public ResponseEntity<User> createUser(UserWrapper userWrapper) {
+    public ResponseEntity<User> createUser(UserEnterWrapper userWrapper) {
         User newUser = new User(userWrapper);
         newUser = userRepository.save(newUser);
         return new ResponseEntity<>(newUser, HttpStatus.CREATED);
@@ -91,8 +91,9 @@ public class UserService {
         return new ResponseEntity<>(currentUser, HttpStatus.OK);
     }
 
-    private String getToken(User user) {
-        String token = "";
+    private String getToken(User user){
+
+        String token = "\"name\" : \"" + user.getFirstname() + "\"";
         try {
             Date currentDate = timeProvider.now();
             Map<String, Object> tokenData = new HashMap<>();
@@ -103,10 +104,12 @@ public class UserService {
             tokenData.put("iat", currentDate);
             JwtBuilder jwtBuilder = Jwts.builder();
             jwtBuilder.setClaims(tokenData);
-            token = jwtBuilder.signWith(SignatureAlgorithm.HS512, secret).compact();
-        } catch (Exception e) {
+            token += jwtBuilder.signWith(SignatureAlgorithm.HS512, secret).compact();
+        }
+        catch (Exception e){
             System.out.println("Error");
         }
+        System.out.println(token);
         return token;
     }
 
@@ -147,13 +150,14 @@ public class UserService {
             return new ResponseEntity(HttpStatus.REQUEST_TIMEOUT);
         }
         registrationRepository.delete(current.getId());
-        return this.createUser(new UserWrapper( current.getLogin(),
-                                                current.getPasswordHash(),
-                                                wrapper.getUserFirstname(),
-                                                wrapper.getUserLastname(),
-                                                wrapper.getUserDateOfBirth(),
-                                                0,
-                                                true));
+//        return this.createUser(new UserWrapper( current.getLogin(),
+//                                                current.getPasswordHash(),
+//                                                wrapper.getUserFirstname(),
+//                                                wrapper.getUserLastname(),
+//                                                wrapper.getUserDateOfBirth(),
+//                                                0,
+//                                                true));
+        return null;
     }
 
     private Date calculateExpirationDate(Date createdDate) {
