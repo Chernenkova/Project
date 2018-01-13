@@ -31,25 +31,20 @@ public class User {
     private String userPassword;
 
     @Column(name = "FIRSTNAME", length = 50)
-    @NotNull
     @Size(min = 4, max = 50)
     private String firstname;
 
     @Column(name = "LASTNAME", length = 50)
-    @NotNull
     @Size(min = 4, max = 50)
     private String lastname;
 
     @Column(name = "DATEOFBIRTH", length = 50)
-    @NotNull
     private Date dateofbirth;
 
     @Column(name = "RAITING", length = 50)
-    @NotNull
     private Integer raiting;
 
     @Column(name = "ENABLED")
-    @NotNull
     private Boolean enabled;
 
     @Column(name = "LASTPASSWORDRESETDATE")
@@ -71,11 +66,14 @@ public class User {
     public User(UserWrapper userWrapper) {
         this.username = userWrapper.getUsername();
         this.userPassword = userWrapper.getUserPassword();
-        this.firstname = userWrapper.getUserFirstname();
-        this.lastname = userWrapper.getUserLastname();
-        this.dateofbirth = toDate(userWrapper.getUserDateOfBirth());
-        this.raiting = userWrapper.getUserRaiting();
-        this.enabled = userWrapper.getEnabled();
+        this.firstname = "Unknown";
+        this.lastname = "Unknown";
+        //TODO: recreate
+        //this.dateofbirth = toDate(userWrapper.getUserDateOfBirth());
+        this.dateofbirth = toDate("1900 1 0");
+        this.raiting = 0;
+//        this.enabled = userWrapper.getEnabled();
+        this.enabled = Boolean.TRUE;
         this.lastPasswordResetDate = new Date();
     }
 
@@ -171,6 +169,7 @@ public class User {
     }
 
     public static Date toDate(String dateString) {
+        if(dateString == null) return null;
         String[] a = dateString.split(" ");
         Date date = new Date();
         date.setYear(Integer.parseInt(a[0]) - 1900);

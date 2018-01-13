@@ -20,6 +20,16 @@ public class UserWrapper {
         this.enabled = enabled;
     }
 
+    public UserWrapper(String username, String userPassword) {
+        this.username = username;
+        this.userPassword = userPassword;
+        this.userFirstname = null;
+        this.userLastname = null;
+        this.userDateOfBirth = null;
+        this.userRaiting = null;
+        this.enabled = null;
+    }
+
     public UserWrapper() {
     }
 
