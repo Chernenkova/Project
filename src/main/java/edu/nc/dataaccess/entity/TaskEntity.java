@@ -1,9 +1,6 @@
 package edu.nc.dataaccess.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Lob;
+import javax.persistence.*;
 
 @Entity
 public class TaskEntity {
@@ -16,11 +13,21 @@ public class TaskEntity {
     private byte[] task;
     @Lob
     private byte[] answer;
+    @OneToOne
+    private User author;
 
+    @Deprecated
     public TaskEntity(String type, byte[] task, byte[] answer) {
         this.type = type;
         this.task = task;
         this.answer = answer;
+    }
+
+    public TaskEntity(String type, byte[] task, byte[] answer, User author) {
+        this.type = type;
+        this.task = task;
+        this.answer = answer;
+        this.author = author;
     }
 
     public TaskEntity() {
@@ -56,5 +63,13 @@ public class TaskEntity {
 
     public void setAnswer(byte[] answer) {
         this.answer = answer;
+    }
+
+    public User getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(User author) {
+        this.author = author;
     }
 }

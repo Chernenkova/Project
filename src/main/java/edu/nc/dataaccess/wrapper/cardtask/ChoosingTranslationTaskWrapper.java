@@ -4,6 +4,7 @@ public class ChoosingTranslationTaskWrapper {
     private long[] cardsIds;
 
     public ChoosingTranslationTaskWrapper() {
+        cardsIds = new long[0];
     }
 
     public ChoosingTranslationTaskWrapper(long[] cardsIds) {
