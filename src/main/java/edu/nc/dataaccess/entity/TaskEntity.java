@@ -16,18 +16,32 @@ public class TaskEntity {
     @OneToOne
     private User author;
 
+    private String name;
+    private Integer reward;
+    private Integer minCost;
+
     @Deprecated
     public TaskEntity(String type, byte[] task, byte[] answer) {
         this.type = type;
         this.task = task;
         this.answer = answer;
     }
-
+    @Deprecated
     public TaskEntity(String type, byte[] task, byte[] answer, User author) {
         this.type = type;
         this.task = task;
         this.answer = answer;
         this.author = author;
+    }
+
+    public TaskEntity(String type, byte[] task, byte[] answer, User author, String name, Integer reward, Integer minCost) {
+        this.type = type;
+        this.task = task;
+        this.answer = answer;
+        this.author = author;
+        this.name = name;
+        this.reward = reward;
+        this.minCost = minCost;
     }
 
     public TaskEntity() {
@@ -71,5 +85,29 @@ public class TaskEntity {
 
     public void setAuthor(User author) {
         this.author = author;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Integer getReward() {
+        return reward;
+    }
+
+    public void setReward(Integer reward) {
+        this.reward = reward;
+    }
+
+    public Integer getMinCost() {
+        return minCost;
+    }
+
+    public void setMinCost(Integer minCost) {
+        this.minCost = minCost;
     }
 }
