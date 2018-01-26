@@ -4,6 +4,7 @@ import edu.nc.dataaccess.entity.RegUserEntity;
 import edu.nc.dataaccess.entity.User;
 import edu.nc.dataaccess.model.security.UserEnterWrapper;
 import edu.nc.dataaccess.repository.RegistrationRepository;
+import edu.nc.dataaccess.wrapper.UpdateUserWrapper;
 import edu.nc.dataaccess.wrapper.registration.LoginAndPassword;
 import edu.nc.dataaccess.wrapper.registration.PersonalData;
 import edu.nc.security.JwtUser;
@@ -80,20 +81,18 @@ public class UserService {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
-    public ResponseEntity updateUser(UserWrapper userWrapper, Long userId) {
+    public ResponseEntity updateUser(UpdateUserWrapper updateUserWrapper, Long userId) {
         User currentUser = userRepository.findFirstByUserId(userId);
-        currentUser.setUserPassword(userWrapper.getUserPassword());
-        currentUser.setUsername(userWrapper.getUsername());
-        currentUser.setDateofbirth(User.toDate(userWrapper.getUserDateOfBirth()));
-        currentUser.setFirstname(userWrapper.getUserFirstname());
-        currentUser.setLastname(userWrapper.getUserLastname());
-        userRepository.saveAndFlush(currentUser);
+        currentUser.setFirstname(updateUserWrapper.getUserFirstname());
+        currentUser.setLastname(updateUserWrapper.getUserLastname());
+        currentUser = userRepository.saveAndFlush(currentUser);
         return new ResponseEntity<>(currentUser, HttpStatus.OK);
     }
 
     private String getToken(User user){
 
-        String token = "\"name\" : \"" + user.getFirstname() + "\"";
+        String token = "\"name\" : \"" + user.getFirstname() + "\", " + "\"raiting\" : \"" + user.getRaiting() + "\"" +
+                "\"id\" : \"" + user.getUserId() + "\"";
         try {
             Date currentDate = timeProvider.now();
             Map<String, Object> tokenData = new HashMap<>();

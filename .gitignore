@@ -24,3 +24,6 @@ hs_err_pid*
 .idea/*
 target/*
 log.txt
+
+src/main/resources/application.properties
+src/main/resources/email.properties
