@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public class JsonClassParser {
 
-    static byte[] getBytes(Object o) {
+    public static byte[] getBytes(Object o) {
         ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.writeValueAsBytes(o);
@@ -17,7 +17,7 @@ public class JsonClassParser {
         return null;
     }
 
-    static <T> T getObject(byte[] bytes, Class<T> clazz) {
+    public static <T> T getObject(byte[] bytes, Class<T> clazz) {
         ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.readValue(bytes, clazz);
