@@ -15,10 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Stream;
 
 @Component
 public class TaskProgressService {
@@ -40,7 +37,8 @@ public class TaskProgressService {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         List<TaskEntity> tasks = taskRepository.findAllByMinCostIsLessThanEqualAndTypeIsNotLike(user.getRaiting(), GeneralSettings.DICTIONARY_TYPE);
-        //TODO:
+        tasks.sort((taskEntity, t1) -> t1.getReward() - taskEntity.getReward());
+        //TODO: completed tasks
         return new ResponseEntity<>(getFromList(tasks), HttpStatus.OK);
     }
 

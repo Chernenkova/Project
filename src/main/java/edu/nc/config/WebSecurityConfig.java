@@ -91,7 +91,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/recover-password/**").permitAll()
                 //TODO: delete lines that are used only for testing
 //                .antMatchers("/cards/**").permitAll()
-                .antMatchers("/choosing-translation/**").permitAll()
+//                .antMatchers("/choosing-translation/**").permitAll()
 //                .antMatchers("/questions-text/**").permitAll()
                 .anyRequest().authenticated();
 
