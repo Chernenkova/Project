@@ -94,7 +94,7 @@ public class DictionaryService {
             //There is no dictionary for this person
             ChoosingTranslationTaskWrapper task = new ChoosingTranslationTaskWrapper();
             byte[] bytes = JsonClassParser.getBytes(task);
-            taskEntity = new TaskEntity(GeneralSettings.DICTIONARY_TYPE, bytes, null, user);
+            taskEntity = new TaskEntity(GeneralSettings.DICTIONARY_TYPE, bytes, null, user,"",0,0);
         }
         long newId = putWordToDB(cardWrapper);
         ChoosingTranslationTaskWrapper taskWrapper = JsonClassParser.getObject(taskEntity.getTask(), ChoosingTranslationTaskWrapper.class);

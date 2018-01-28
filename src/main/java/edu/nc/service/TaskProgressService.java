@@ -37,7 +37,7 @@ public class TaskProgressService {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         List<TaskEntity> tasks = taskRepository.findAllByMinCostIsLessThanEqualAndTypeIsNotLike(user.getRaiting(), GeneralSettings.DICTIONARY_TYPE);
-        tasks.sort((taskEntity, t1) -> t1.getReward() - taskEntity.getReward());
+        tasks.sort((taskEntity, t1) -> -t1.getReward() + taskEntity.getReward());
         //TODO: completed tasks
         return new ResponseEntity<>(getFromList(tasks), HttpStatus.OK);
     }

@@ -29,7 +29,7 @@ public class ChoosingTranslationTaskService {
     public ResponseEntity<TaskEntity> addTask(ChoosingTranslationTaskWrapper wrapper) {
         ChoosingTranslationTaskSerializerWrapper c = new ChoosingTranslationTaskSerializerWrapper(wrapper.getCardsIds());
         byte[] bytes = JsonClassParser.getBytes(c);
-        TaskEntity task = new TaskEntity(GeneralSettings.CHOOSING_TASK_BASIC_TYPE, bytes, null);
+        TaskEntity task = new TaskEntity(GeneralSettings.CHOOSING_TASK_BASIC_TYPE, bytes, null,null,"",0,0);
         taskRepository.save(task);
         return new ResponseEntity<>(task, HttpStatus.OK);
     }

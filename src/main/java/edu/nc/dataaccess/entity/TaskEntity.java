@@ -20,19 +20,19 @@ public class TaskEntity {
     private Integer reward;
     private Integer minCost;
 
-    @Deprecated
-    public TaskEntity(String type, byte[] task, byte[] answer) {
-        this.type = type;
-        this.task = task;
-        this.answer = answer;
-    }
-    @Deprecated
-    public TaskEntity(String type, byte[] task, byte[] answer, User author) {
-        this.type = type;
-        this.task = task;
-        this.answer = answer;
-        this.author = author;
-    }
+//    @Deprecated
+//    public TaskEntity(String type, byte[] task, byte[] answer) {
+//        this.type = type;
+//        this.task = task;
+//        this.answer = answer;
+//    }
+//    @Deprecated
+//    public TaskEntity(String type, byte[] task, byte[] answer, User author) {
+//        this.type = type;
+//        this.task = task;
+//        this.answer = answer;
+//        this.author = author;
+//    }
 
     public TaskEntity(String type, byte[] task, byte[] answer, User author, String name, Integer reward, Integer minCost) {
         this.type = type;

@@ -47,7 +47,7 @@ public class QuestionTaskService {
         }
         byte[] answerBytes = JsonClassParser.getBytes(new QuestionTaskAnswerWrapper(qaArray));
 
-        TaskEntity task = new TaskEntity(GeneralSettings.QUESTION_TASK_TYPE, taskBytes, answerBytes);
+        TaskEntity task = new TaskEntity(GeneralSettings.QUESTION_TASK_TYPE, taskBytes, answerBytes,null,"",0,0);
         taskRepository.saveAndFlush(task);
         return new ResponseEntity(HttpStatus.OK);
     }
