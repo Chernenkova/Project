@@ -12,19 +12,13 @@ public class CardEntity {
     @GeneratedValue
     private Long id;
 
-    private String word;
+    private byte[] wordBytes;
 
-    private String translation;
-
-    public CardEntity(String word, String translation) {
-        this.word = word;
-        this.translation = translation;
-    }
+    private byte[] translationBytes;
 
     public CardEntity(CardWrapper wrapper) {
-        this.word = wrapper.getWord();
-        this.translation = wrapper.getTranslation();
-        //test
+        this.wordBytes = wrapper.getWord().getBytes();
+        this.translationBytes = wrapper.getTranslation().getBytes();
     }
 
     public CardEntity() {
@@ -39,19 +33,34 @@ public class CardEntity {
     }
 
     public String getWord() {
-        return word;
+        return new String(wordBytes);
     }
 
     public void setWord(String word) {
-        this.word = word;
+        this.wordBytes = word.getBytes();
     }
 
     public String getTranslation() {
-        return translation;
+        return new String(translationBytes);
     }
 
     public void setTranslation(String translation) {
-        this.translation = translation;
+        this.translationBytes = translation.getBytes();
     }
 
+    public byte[] getWordBytes() {
+        return wordBytes;
+    }
+
+    public void setWordBytes(byte[] wordBytes) {
+        this.wordBytes = wordBytes;
+    }
+
+    public byte[] getTranslationBytes() {
+        return translationBytes;
+    }
+
+    public void setTranslationBytes(byte[] translationBytes) {
+        this.translationBytes = translationBytes;
+    }
 }
