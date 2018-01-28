@@ -24,6 +24,7 @@ public class CardEntity {
     public CardEntity(CardWrapper wrapper) {
         this.word = wrapper.getWord();
         this.translation = wrapper.getTranslation();
+        //test
     }
 
     public CardEntity() {
