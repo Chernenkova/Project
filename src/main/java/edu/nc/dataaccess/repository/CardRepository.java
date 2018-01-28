@@ -7,5 +7,8 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import java.util.Optional;
 
 public interface CardRepository extends JpaRepository<CardEntity, Long>, PagingAndSortingRepository<CardEntity, Long> {
-    Optional<CardEntity> findByWordAndTranslation(String word, String translation);
+    default Optional<CardEntity> findByWordAndTranslation(String word, String translation){
+        return findByWordBytesAndTranslationBytes(word.getBytes(), translation.getBytes());
+    }
+    Optional<CardEntity> findByWordBytesAndTranslationBytes(byte[] wordBytes, byte[] translationBytes);
 }
