@@ -32,5 +32,9 @@ public class CardController {
         return service.addCard(wrapper);
     }
 
+    @RequestMapping(method = RequestMethod.PUT)
+    public ResponseEntity<CardEntity[]> addCards(@RequestBody CardWrapper[] wrapper) {
+        return service.addCards(wrapper);
+    }
 
 }
