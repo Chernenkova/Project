@@ -1,6 +1,7 @@
 package edu.nc.dataaccess.entity;
 
 import edu.nc.dataaccess.model.security.Authority;
+import edu.nc.dataaccess.model.security.AuthorityName;
 import edu.nc.dataaccess.model.security.UserEnterWrapper;
 import edu.nc.dataaccess.model.security.UserWrapper;
 
@@ -32,15 +33,12 @@ public class User {
     private String userPassword;
 
     @Column(name = "FIRSTNAME", length = 50)
-    @Size(min = 4, max = 50)
-    private String firstname;
+    @Size(max = 50)
+    private byte[] firstnameBytes;
 
     @Column(name = "LASTNAME", length = 50)
-    @Size(min = 4, max = 50)
-    private String lastname;
-
-    @Column(name = "DATEOFBIRTH", length = 50)
-    private Date dateofbirth;
+    @Size(max = 50)
+    private byte[] lastnameBytes;
 
     @Column(name = "RAITING", length = 50)
     private Integer raiting;
@@ -60,22 +58,21 @@ public class User {
             inverseJoinColumns = {@JoinColumn(name = "AUTHORITY_ID", referencedColumnName = "ID")})
     private List<Authority> authorities;
 
+
     @OneToMany
     private List<TaskProgressEntity> tasks = new ArrayList<>();
 
 
-    public User(UserEnterWrapper userWrapper) {
+    public User(UserWrapper userWrapper, Authority authority) {
         this.username = userWrapper.getUsername();
         this.userPassword = userWrapper.getUserPassword();
-        this.firstname = "Unknown";
-        this.lastname = "Unknown";
-        //TODO: recreate
-        //this.dateofbirth = toDate(userWrapper.getUserDateOfBirth());
-        this.dateofbirth = toDate("1900 1 0");
+        this.firstnameBytes = userWrapper.getUserFirstname().getBytes();
+        this.lastnameBytes = userWrapper.getUserLastname().getBytes();
         this.raiting = 0;
-//        this.enabled = userWrapper.getEnabled();
         this.enabled = Boolean.TRUE;
         this.lastPasswordResetDate = new Date();
+        authorities = new ArrayList<>();
+        authorities.add(authority);
     }
 
     public User() {
@@ -106,27 +103,19 @@ public class User {
     }
 
     public String getFirstname() {
-        return firstname;
+        return new String(firstnameBytes);
     }
 
     public void setFirstname(String firstname) {
-        this.firstname = firstname;
+        this.firstnameBytes = firstname.getBytes();
     }
 
     public String getLastname() {
-        return lastname;
+        return new String(lastnameBytes);
     }
 
     public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public Date getDateofbirth() {
-        return dateofbirth;
-    }
-
-    public void setDateofbirth(Date dateofbirth) {
-        this.dateofbirth = dateofbirth;
+        this.lastnameBytes = lastname.getBytes();
     }
 
     public Integer getRaiting() {
@@ -169,16 +158,21 @@ public class User {
         this.tasks = tasks;
     }
 
-    public static Date toDate(String dateString) {
-        if(dateString == null) return null;
-        String[] a = dateString.split(" ");
-        Date date = new Date();
-        date.setYear(Integer.parseInt(a[0]) - 1900);
-        date.setMonth(Integer.parseInt(a[1]) - 1);
-        date.setDate(Integer.parseInt(a[2]));
-        date.setHours(0);
-        date.setMinutes(0);
-        date.setSeconds(0);
-        return date;
+    public byte[] getFirstnameBytes() {
+        return firstnameBytes;
     }
+
+    public void setFirstnameBytes(byte[] firstnameBytes) {
+        this.firstnameBytes = firstnameBytes;
+    }
+
+    public byte[] getLastnameBytes() {
+        return lastnameBytes;
+    }
+
+    public void setLastnameBytes(byte[] lastnameBytes) {
+        this.lastnameBytes = lastnameBytes;
+    }
+
+
 }

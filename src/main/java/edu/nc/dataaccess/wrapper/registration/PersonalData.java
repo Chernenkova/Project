@@ -3,7 +3,6 @@ package edu.nc.dataaccess.wrapper.registration;
 public class PersonalData {
     private String userFirstname;
     private String userLastname;
-    private String userDateOfBirth;
 
     public PersonalData() {
     }
@@ -24,11 +23,4 @@ public class PersonalData {
         this.userLastname = userLastname;
     }
 
-    public String getUserDateOfBirth() {
-        return userDateOfBirth;
-    }
-
-    public void setUserDateOfBirth(String userDateOfBirth) {
-        this.userDateOfBirth = userDateOfBirth;
-    }
 }

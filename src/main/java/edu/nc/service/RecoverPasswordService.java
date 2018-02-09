@@ -7,6 +7,7 @@ import edu.nc.dataaccess.entity.RecoverEntity;
 import edu.nc.dataaccess.repository.UserRepository;
 import edu.nc.dataaccess.wrapper.recoverpasswordwrappers.EmailWrapper;
 import edu.nc.dataaccess.wrapper.recoverpasswordwrappers.PasswordWrapper;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +23,7 @@ public class RecoverPasswordService {
     private final String RECOVERING_MESSAGE =
             "Link to recover your password is bellow.\n" +
                     "If You did not make this request, just ignore this message\n";
-    private final String RECOVER_CONFIRM_REQUEST_HTTP = GeneralSettings.DOMAIN
-            + GeneralSettings.RECOVER_PASSWORD
-            + GeneralSettings.RECOVER_CONFIRM + "/";
+    private final String RECOVER_CONFIRM_REQUEST_HTTP = "http://localhost:4200/recover/";
     private final String RECOVERING_THEME = "recovering password";
     private final long TIME_TO_VALIDITY = 1000 * 3600 * 3;
 

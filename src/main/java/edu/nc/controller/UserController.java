@@ -2,6 +2,7 @@ package edu.nc.controller;
 
 import edu.nc.dataaccess.model.security.UserEnterWrapper;
 import edu.nc.dataaccess.model.security.UserWrapper;
+import edu.nc.dataaccess.wrapper.LoginNameLastNameWrapper;
 import edu.nc.dataaccess.wrapper.UpdateUserWrapper;
 import edu.nc.dataaccess.wrapper.registration.LoginAndPassword;
 import edu.nc.dataaccess.wrapper.registration.PersonalData;
@@ -43,6 +44,11 @@ public class UserController {
         return (JwtUser) userDetailsService.loadUserByUsername(username);
     }
 
+    @RequestMapping(method = RequestMethod.GET, value = "/getUserData")
+    public ResponseEntity<LoginNameLastNameWrapper> getUserData(){
+        return userService.getUserData();
+    }
+
     @RequestMapping(method = RequestMethod.GET, value = "/{userId}")
     public ResponseEntity getUser(@PathVariable Long userId) {
         return userService.getUser(userId);
@@ -54,7 +60,7 @@ public class UserController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity createUser(@RequestBody UserEnterWrapper userWrapper) {
+    public ResponseEntity createUser(@RequestBody UserWrapper userWrapper) {
         return userService.createUser(userWrapper);
     }
 
@@ -81,6 +87,11 @@ public class UserController {
     @RequestMapping(method = RequestMethod.GET, value = "/getUser{id}")
     public ResponseEntity getUser(@PathVariable String id){
         return userService.getUser(Long.parseLong(id));
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/isAdmin")
+    public ResponseEntity getRole(){
+        return userService.isAdmin();
     }
 
 }

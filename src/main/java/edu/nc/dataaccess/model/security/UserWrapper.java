@@ -6,18 +6,14 @@ public class UserWrapper {
     private String userPassword;
     private String userFirstname;
     private String userLastname;
-    private String userDateOfBirth;
     private Integer userRaiting;
-    private Boolean enabled;
 
-    public UserWrapper(String username, String userPassword, String userFirstname, String userLastname, String userDateOfBirth, Integer userRaiting, Boolean enabled) {
+    public UserWrapper(String username, String userPassword, String userFirstname, String userLastname, Integer userRaiting) {
         this.username = username;
         this.userPassword = userPassword;
         this.userFirstname = userFirstname;
         this.userLastname = userLastname;
-        this.userDateOfBirth = userDateOfBirth;
         this.userRaiting = userRaiting;
-        this.enabled = enabled;
     }
 
     public UserWrapper(String username, String userPassword) {
@@ -25,9 +21,7 @@ public class UserWrapper {
         this.userPassword = userPassword;
         this.userFirstname = null;
         this.userLastname = null;
-        this.userDateOfBirth = null;
         this.userRaiting = null;
-        this.enabled = null;
     }
 
     public UserWrapper() {
@@ -65,28 +59,12 @@ public class UserWrapper {
         this.userLastname = userLastname;
     }
 
-    public String getUserDateOfBirth() {
-        return userDateOfBirth;
-    }
-
-    public void setUserDateOfBirth(String userDateOfBirth) {
-        this.userDateOfBirth = userDateOfBirth;
-    }
-
     public Integer getUserRaiting() {
         return userRaiting;
     }
 
     public void setUserRaiting(Integer userRaiting) {
         this.userRaiting = userRaiting;
-    }
-
-    public Boolean getEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
     }
 
 }

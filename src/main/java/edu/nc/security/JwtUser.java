@@ -18,7 +18,6 @@ public class JwtUser implements UserDetails {
     private final String firstname;
     private final String lastname;
     private final String password;
-    private final Date dateofbirth;
     private final Integer raiting;
     private final Collection<? extends GrantedAuthority> authorities;
     private final boolean enabled;
@@ -29,7 +28,6 @@ public class JwtUser implements UserDetails {
             String username,
             String firstname,
             String lastname,
-            Date dateOfBirth,
             Integer raiting,
             String password, Collection<? extends GrantedAuthority> authorities,
             boolean enabled,
@@ -39,7 +37,6 @@ public class JwtUser implements UserDetails {
         this.username = username;
         this.firstname = firstname;
         this.lastname = lastname;
-        this.dateofbirth = dateOfBirth;
         this.password = password;
         this.raiting = raiting;
         this.authorities = authorities;
@@ -83,9 +80,6 @@ public class JwtUser implements UserDetails {
         return lastname;
     }
 
-    public Date getDateofbirth() {
-        return dateofbirth;
-    }
 
     public Integer getRaiting() {
         return raiting;

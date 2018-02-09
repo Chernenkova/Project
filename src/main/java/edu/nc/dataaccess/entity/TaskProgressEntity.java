@@ -31,7 +31,7 @@ public class TaskProgressEntity {
         this.task = task;
         this.totalScore = 0;
         this.score = 0;
-        this.status = TaskProgressStatus.IN_PROGRESS;
+        this.status = TaskProgressStatus.COMPLETED;
     }
 
     public Long getId() {

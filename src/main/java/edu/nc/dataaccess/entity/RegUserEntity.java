@@ -22,9 +22,11 @@ public class RegUserEntity {
 
     public RegUserEntity(String login, String password) {
         this.login = login;
-        this.passwordHash = DigestUtils.md5Hex(password);
+        //TODO: create HASH
+        //this.passwordHash = DigestUtils.md5Hex(password);
+        this.passwordHash = password;
         this.date = new Date();
-        this.uuid = UUID.randomUUID().toString();
+        this.uuid = "reg01WK-" + UUID.randomUUID().toString();
     }
 
     public RegUserEntity() {

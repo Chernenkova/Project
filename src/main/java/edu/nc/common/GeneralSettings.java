@@ -2,7 +2,7 @@ package edu.nc.common;
 
 public class GeneralSettings {
 
-    public static final String DOMAIN = "http://localhost:8080";
+    public static final String DOMAIN = "http://localhost:4200";
 
     public static final String CARD_CONTROLLER = "/cards";
     public static final String CHOOSING_TRANSLATION_TASK = "/choosing-translation";
@@ -11,6 +11,7 @@ public class GeneralSettings {
     public static final String QUESTION_TASK = "/questions-text";
     public static final String DICTIONARY = "/dictionary";
     public static final String TASK_PROGRESS = "/task-progress";
+    public static final String TASK_WRITING = "/task-writing";
 
     public static final String CHOOSING_TASK_BASIC_TYPE = "CHOOSING";
     public static final String CHOOSING_TASK_ADVANCED_TYPE = "CHOOSING_ADVANCED";
