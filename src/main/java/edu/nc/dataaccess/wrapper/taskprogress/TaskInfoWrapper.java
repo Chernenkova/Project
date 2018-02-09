@@ -6,15 +6,17 @@ public class TaskInfoWrapper {
     private String type;
     private int reward;
     private long id;
+    private boolean completed;
 
     public TaskInfoWrapper() {
     }
 
-    public TaskInfoWrapper(String name, String type, int reward, long id) {
+    public TaskInfoWrapper(String name, String type, int reward, long id, boolean completed) {
         this.name = name;
         this.type = type;
         this.reward = reward;
         this.id = id;
+        this.completed = completed;
     }
 
     public String getName() {
@@ -47,5 +49,13 @@ public class TaskInfoWrapper {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
     }
 }

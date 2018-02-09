@@ -19,4 +19,5 @@ public class GeneralSettings {
     public static final String QUESTION_TASK_TYPE = "QUESTION";
 
     public static final String DICTIONARY_TYPE = "DICTIONARY";
+    public static final String WRITING_TYPE = "WRITING";
 }

@@ -43,14 +43,16 @@ public class TaskProgressService {
         List<TaskProgressEntity> completedTasks = user.getTasks();
 
         //TODO: completed tasks
-        tasks = tasks.stream().peek(x -> {
-            Optional<TaskProgressEntity> tpe = completedTasks.stream().filter(y -> y.getTask().getId().equals(x.getId())).findAny();
-            if(tpe.isPresent()) {
-                x.setReward((int) Math.ceil((double)x.getReward() / 10));
-            }
-        }).collect(Collectors.toList());
-        tasks.sort((taskEntity, t1) -> t1.getReward() - taskEntity.getReward());
-        return new ResponseEntity<>(getFromList(tasks), HttpStatus.OK);
+//        tasks = tasks.stream().peek(x -> {
+//            Optional<TaskProgressEntity> tpe = completedTasks.stream().filter(y -> y.getTask().getId().equals(x.getId())).findAny();
+//            if(tpe.isPresent()) {
+//                x.setReward((int) Math.ceil((double)x.getReward() / 10));
+//            }
+//        }).collect(Collectors.toList());
+//        tasks.sort((taskEntity, t1) -> t1.getReward() - taskEntity.getReward());
+//
+//        return new ResponseEntity<>(getFromList(tasks), HttpStatus.OK);
+        return new ResponseEntity<>(getTaskInfo(tasks, completedTasks), HttpStatus.OK);
     }
 
 
@@ -66,11 +68,23 @@ public class TaskProgressService {
         TaskInfoWrapper[] array = new TaskInfoWrapper[taskEntityList.size()];
         for (int i = 0; i < array.length; i++) {
             TaskEntity current = taskEntityList.get(i);
-            array[i] = new TaskInfoWrapper(current.getName(), current.getType(), current.getReward(), current.getId());
+            array[i] = new TaskInfoWrapper(current.getName(), current.getType(), current.getReward(), current.getId(), false);
         }
         return array;
     }
 
+    private TaskInfoWrapper[] getTaskInfo(List<TaskEntity> tasks, List<TaskProgressEntity> progress) {
+        return tasks.stream().map(x -> {
+            Optional<TaskProgressEntity> tpe = progress.stream().filter(y -> y.getTask().getId().equals(x.getId())).findAny();
+            int reward = x.getReward();
+            boolean completed = false;
+            if (tpe.isPresent()) {
+                reward = (int) Math.ceil((double) x.getReward() / 10);
+                completed = true;
+            }
+            return new TaskInfoWrapper(x.getName(), x.getType(), reward, x.getId(), completed);
+        }).sorted((taskEntity, t1) -> t1.getReward() - taskEntity.getReward()).toArray(TaskInfoWrapper[]::new);
+    }
 
     public ResponseEntity completeTask(Long id){
         User current = userRepository.findByUsername(JwtUserDetails.getUserName());
