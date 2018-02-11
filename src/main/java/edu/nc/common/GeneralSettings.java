@@ -17,7 +17,13 @@ public class GeneralSettings {
     public static final String CHOOSING_TASK_ADVANCED_TYPE = "CHOOSING_ADVANCED";
 
     public static final String QUESTION_TASK_TYPE = "QUESTION";
+    public static final String VIDEO_TASK_TYPE = "VIDEO";
+    public static final String GRAMMAR_TASK_TYPE = "GRAMMAR";
 
     public static final String DICTIONARY_TYPE = "DICTIONARY";
+
     public static final String WRITING_TYPE = "WRITING";
+
+    public static final String VIDEO_BEGIN = "https://www.youtube.com/embed/";
+
 }

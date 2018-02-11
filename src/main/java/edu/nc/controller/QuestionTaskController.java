@@ -2,13 +2,10 @@ package edu.nc.controller;
 
 
 import edu.nc.common.GeneralSettings;
-import edu.nc.dataaccess.wrapper.questiontask.QuestionResult;
-import edu.nc.dataaccess.wrapper.questiontask.QuestionTaskAnswerWrapper;
+import edu.nc.dataaccess.wrapper.questiontask.*;
 import edu.nc.security.JwtUser;
 import edu.nc.security.JwtUserDetails;
 import edu.nc.service.QuestionTaskService;
-import edu.nc.dataaccess.wrapper.questiontask.CreateQuestionTaskWrapper;
-import edu.nc.dataaccess.wrapper.questiontask.QuestionTaskWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +26,16 @@ public class QuestionTaskController {
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public ResponseEntity addTask(@RequestBody CreateQuestionTaskWrapper wrapper){
-        return questionTaskService.addTask(wrapper);
+        return questionTaskService.addTask(wrapper, GeneralSettings.QUESTION_TASK_TYPE);
+    }
+
+    @RequestMapping(value = "/create-video", method = RequestMethod.POST)
+    public ResponseEntity addTaskVideo(@RequestBody CreateQuestionTaskWrapper wrapper){
+        return questionTaskService.addTask(wrapper, GeneralSettings.VIDEO_TASK_TYPE);
+    }
+    @RequestMapping(value = "/create-grammar", method = RequestMethod.POST)
+    public ResponseEntity addTaskGrammar(@RequestBody CreateQuestionTaskWrapper wrapper){
+        return questionTaskService.addTask(wrapper, GeneralSettings.GRAMMAR_TASK_TYPE);
     }
 
     @RequestMapping(value = "/task/{id}", method = RequestMethod.GET)
@@ -37,11 +43,22 @@ public class QuestionTaskController {
         return questionTaskService.get(id);
     }
 
+    @RequestMapping(value = "/videoTask/{id}", method = RequestMethod.GET)
+    public ResponseEntity<QuestionTaskWrapper> getVideo(@PathVariable Long id){
+        return questionTaskService.getVideo(id);
+    }
+
     //TODO: create
     @RequestMapping(value = "/check/{id}")
     public ResponseEntity<QuestionResult> check(@PathVariable("id") Long id,
                                                 @RequestBody QuestionTaskAnswerWrapper wrapper){
         return questionTaskService.check(id, wrapper);
+    }
+
+    @RequestMapping(value = "/checkVideo/{id}")
+    public ResponseEntity<QuestionResult> checkVideo(@PathVariable("id") Long id,
+                                                @RequestBody QuestionTaskAnswerWrapper wrapper){
+        return questionTaskService.checkVideo(id, wrapper);
     }
 
 }
