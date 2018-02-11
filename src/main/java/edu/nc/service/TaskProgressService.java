@@ -5,6 +5,7 @@ import com.sun.istack.internal.Nullable;
 import edu.nc.common.GeneralSettings;
 import edu.nc.dataaccess.entity.TaskEntity;
 import edu.nc.dataaccess.entity.TaskProgressEntity;
+import edu.nc.dataaccess.entity.TaskProgressStatus;
 import edu.nc.dataaccess.entity.User;
 import edu.nc.dataaccess.repository.TaskProgressRepository;
 import edu.nc.dataaccess.repository.TaskRepository;
@@ -35,10 +36,11 @@ public class TaskProgressService {
     }
 
     public ResponseEntity<TaskInfoWrapper[]> getAvailableAssignments() {
-        User user = getCurrentUser();
-        if (user == null) {
+        Optional<User> opt = userRepository.getCurrentUser();
+        if (!opt.isPresent()) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+        User user = opt.get();
         List<TaskEntity> tasks = taskRepository.findAllByMinCostIsLessThanEqualAndTypeIsNotLike(user.getRaiting(), GeneralSettings.DICTIONARY_TYPE);
         List<TaskProgressEntity> completedTasks = user.getTasks();
 
@@ -56,13 +58,13 @@ public class TaskProgressService {
     }
 
 
-    private @Nullable User getCurrentUser() {
-        String login = JwtUserDetails.getUserName();
-        if(login == null){
-            return null;
-        }
-        return userRepository.findByUsername(login);
-    }
+//    private @Nullable User getCurrentUser() {
+//        String login = JwtUserDetails.getUserName();
+//        if(login == null){
+//            return null;
+//        }
+//        return userRepository.findByUsername(login);
+//    }
 
     private TaskInfoWrapper[] getFromList(List<TaskEntity> taskEntityList) {
         TaskInfoWrapper[] array = new TaskInfoWrapper[taskEntityList.size()];
@@ -87,6 +89,13 @@ public class TaskProgressService {
     }
 
     public ResponseEntity completeTask(Long id){
+        return completeTask(id, userRepository, taskRepository, taskProgressRepository);
+    }
+
+    public static ResponseEntity completeTask(Long id,
+                                              UserRepository userRepository,
+                                              TaskRepository taskRepository,
+                                              TaskProgressRepository taskProgressRepository){
         User current = userRepository.findByUsername(JwtUserDetails.getUserName());
         TaskEntity task = taskRepository.findOne(id);
         if(current == null || task == null){
@@ -98,17 +107,22 @@ public class TaskProgressService {
         TaskProgressEntity tpe = null;
 
         int currentRating = current.getRaiting();
-
+        int increase = 0;
         if(optional.isPresent()){
             tpe = optional.get();
-            currentRating += Math.ceil((double)task.getReward() / 10);
+            increase += Math.ceil((double)task.getReward() / 10);
 
         } else {
-            tpe = new TaskProgressEntity(task);
+            tpe = new TaskProgressEntity(task, TaskProgressStatus.COMPLETED);
             tpe = taskProgressRepository.save(tpe);
-            currentRating += task.getReward();
+            increase += task.getReward();
             current.getTasks().add(tpe);
         }
+        if(tpe.getTask().getType().equalsIgnoreCase("CHOOSING")) {
+            increase *= tpe.getScore();
+            increase = (int) Math.ceil((double)increase / tpe.getTotalScore());
+        }
+        currentRating += increase;
 
         current.setRaiting(currentRating);
         current = userRepository.saveAndFlush(current);

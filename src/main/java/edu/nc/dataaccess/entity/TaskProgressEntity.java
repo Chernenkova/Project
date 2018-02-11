@@ -27,11 +27,11 @@ public class TaskProgressEntity {
         this.status = status;
     }
 
-    public TaskProgressEntity(TaskEntity task) {
+    public TaskProgressEntity(TaskEntity task, TaskProgressStatus status) {
         this.task = task;
         this.totalScore = 0;
         this.score = 0;
-        this.status = TaskProgressStatus.COMPLETED;
+        this.status = status;
     }
 
     public Long getId() {

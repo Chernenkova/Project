@@ -40,9 +40,9 @@ public class ChoosingTranslationTaskController {
         return service.getTask(id);
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/task/result")
-    public ResponseEntity<CardResponseWrapper> checkTranslation(@RequestBody CardWrapperIdAndTranslation wrapper) {
-        return service.checkTranslation(wrapper);
+    @RequestMapping(method = RequestMethod.POST, value = "/task/result/{id}")
+    public ResponseEntity<CardResponseWrapper> checkTranslation(@RequestBody CardWrapperIdAndTranslation wrapper, @PathVariable Long id) {
+        return service.checkTranslation(wrapper, id);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/create/basic")

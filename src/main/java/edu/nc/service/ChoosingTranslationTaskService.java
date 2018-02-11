@@ -1,10 +1,11 @@
 package edu.nc.service;
 
-import edu.nc.dataaccess.entity.CardEntity;
+import edu.nc.dataaccess.entity.*;
+import edu.nc.dataaccess.repository.TaskProgressRepository;
 import edu.nc.dataaccess.repository.TaskRepository;
+import edu.nc.dataaccess.repository.UserRepository;
 import edu.nc.dataaccess.wrapper.cardtask.*;
 import edu.nc.common.GeneralSettings;
-import edu.nc.dataaccess.entity.TaskEntity;
 import edu.nc.dataaccess.repository.CardRepository;
 import edu.nc.dataaccess.serializerwrappers.ChoosingTranslationTaskSerializerWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,17 +14,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.stream.LongStream;
 
 @Component
 public class ChoosingTranslationTaskService {
 
     private TaskRepository taskRepository;
     private CardRepository cardRepository;
+    private UserRepository userRepository;
+    private TaskProgressRepository taskProgressRepository;
 
     @Autowired
-    public ChoosingTranslationTaskService(TaskRepository taskRepository, CardRepository cardRepository) {
+    public ChoosingTranslationTaskService(TaskRepository taskRepository,
+                                          CardRepository cardRepository,
+                                          UserRepository userRepository,
+                                          TaskProgressRepository taskProgressRepository) {
         this.taskRepository = taskRepository;
         this.cardRepository = cardRepository;
+        this.userRepository = userRepository;
+        this.taskProgressRepository = taskProgressRepository;
     }
 
     public ResponseEntity<TaskEntity> addTask(ChoosingTranslationTaskWrapper wrapper) {
@@ -55,33 +64,78 @@ public class ChoosingTranslationTaskService {
 
 
     public ResponseEntity<ChoosingTranslationWrapper> getTask(Long id) {
+        Optional<User> optional = userRepository.getCurrentUser();
+        if(!optional.isPresent()){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        User user = optional.get();
+        List<TaskProgressEntity> listOfTasks = user.getTasks();
         TaskEntity task = taskRepository.findOne(id);
         if (task == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        Optional<TaskProgressEntity> optionalTaskEntity = listOfTasks
+                .stream()
+                .filter(x -> x.getTask().getId().equals(task.getId()))
+                .findAny();
+
+        ChoosingTranslationWrapper  ctw = null;
         if (task.getType().equalsIgnoreCase(GeneralSettings.CHOOSING_TASK_BASIC_TYPE)) {
-            return getBasicTask(task);
+            ctw = getBasicTask(task);
         }
         if (task.getType().equalsIgnoreCase(GeneralSettings.CHOOSING_TASK_ADVANCED_TYPE)) {
-            return getAdvancedTask(task);
+            ctw = getAdvancedTask(task);
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        TaskProgressEntity tpe = null;
+        if(optionalTaskEntity.isPresent()){
+            //User has already executed this task
+            tpe = optionalTaskEntity.get();
+            tpe.setStatus(TaskProgressStatus.IN_PROGRESS);
+
+        }else {
+            //User has not executed this task yet
+            tpe = new TaskProgressEntity(task, TaskProgressStatus.FIRST);
+        }
+        tpe.setTotalScore(ctw.getArray().length);
+        tpe.setScore(0);
+        tpe = taskProgressRepository.saveAndFlush(tpe);
+        if(!optionalTaskEntity.isPresent()){
+            user.getTasks().add(tpe);
+        }
+        user = userRepository.saveAndFlush(user);
+
+        return new ResponseEntity<>(ctw, HttpStatus.OK);
     }
 
-    public ResponseEntity<CardResponseWrapper> checkTranslation(CardWrapperIdAndTranslation wrapper) {
+    public ResponseEntity<CardResponseWrapper> checkTranslation(CardWrapperIdAndTranslation wrapper, Long id) {
+        Optional<User> optUser = userRepository.getCurrentUser();
+        if(!optUser.isPresent()){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        User user = optUser.get();
         CardEntity entity = cardRepository.findOne(wrapper.getId());
         if (entity == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        Optional<TaskProgressEntity> optTpe= user.getTasks().stream().filter(x -> x.getTask().getId().equals(id)).findAny();
+        if(!optTpe.isPresent()){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        TaskProgressEntity tpe = optTpe.get();
+
         if (entity.getTranslation().equalsIgnoreCase(wrapper.getTranslation())) {
             //TODO increment the user's score
+            tpe.setScore(tpe.getScore() + 1);
         } else {
             //TODO decrement the user's score
         }
+        taskProgressRepository.saveAndFlush(tpe);
         return new ResponseEntity<>(new CardResponseWrapper(entity.getTranslation()), HttpStatus.OK);
     }
 
-    private ResponseEntity<ChoosingTranslationWrapper> getBasicTask(TaskEntity task) {
+    private ChoosingTranslationWrapper getBasicTask(TaskEntity task) {
         ChoosingTranslationTaskSerializerWrapper c1 = JsonClassParser.getObject(task.getTask(), ChoosingTranslationTaskSerializerWrapper.class);
 
         //Getting cards which will be used in task
@@ -91,10 +145,10 @@ public class ChoosingTranslationTaskService {
             if (entity == null) continue;
             cards.add(entity);
         }
-        return new ResponseEntity<>(createTask(cards), HttpStatus.OK);
+        return createTask(cards);
     }
 
-    private ResponseEntity<ChoosingTranslationWrapper> getAdvancedTask(TaskEntity task) {
+    private ChoosingTranslationWrapper getAdvancedTask(TaskEntity task) {
         //TODO: implements this method
         return null;
     }
