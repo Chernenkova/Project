@@ -1,15 +1,25 @@
 package edu.nc.dataaccess.wrapper.questiontask;
 
 public class QuestionTaskWrapper {
+    private String name;
     private String text;
     private QuestionWrapper[] questions;
 
     public QuestionTaskWrapper() {
     }
 
-    public QuestionTaskWrapper(String text, QuestionWrapper[] questions) {
+    public QuestionTaskWrapper(String name, String text, QuestionWrapper[] questions) {
         this.text = text;
         this.questions = questions;
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getText() {
