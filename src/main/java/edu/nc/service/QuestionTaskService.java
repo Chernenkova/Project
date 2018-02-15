@@ -3,26 +3,33 @@ package edu.nc.service;
 
 import edu.nc.common.GeneralSettings;
 import edu.nc.dataaccess.entity.TaskEntity;
+import edu.nc.dataaccess.entity.TaskProgressEntity;
+import edu.nc.dataaccess.entity.TaskProgressStatus;
+import edu.nc.dataaccess.entity.User;
+import edu.nc.dataaccess.repository.TaskProgressRepository;
 import edu.nc.dataaccess.repository.TaskRepository;
+import edu.nc.dataaccess.repository.UserRepository;
+import edu.nc.dataaccess.serializerwrappers.ChoosingTranslationTaskSerializerWrapper;
 import edu.nc.dataaccess.wrapper.questiontask.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Component
 public class QuestionTaskService {
 
 
     private TaskRepository taskRepository;
-
+    private UserRepository userRepository;
+    private TaskProgressRepository taskProgressRepository;
     @Autowired
-    public QuestionTaskService(TaskRepository taskRepository) {
+    public QuestionTaskService(TaskRepository taskRepository, UserRepository userRepository, TaskProgressRepository taskProgressRepository) {
         this.taskRepository = taskRepository;
+        this.userRepository = userRepository;
+        this.taskProgressRepository = taskProgressRepository;
     }
 
     /**
@@ -64,8 +71,13 @@ public class QuestionTaskService {
         if(null == entity){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        if(GeneralSettings.QUESTION_TASK_TYPE.equals(entity.getType())){
+        if(GeneralSettings.QUESTION_TASK_TYPE.equals(entity.getType()) ||
+                //TODO: recreate
+                GeneralSettings.GRAMMAR_TASK_TYPE.equals(entity.getType())){
+
+
             QuestionTaskWrapper task = JsonClassParser.getObject(entity.getTask(), QuestionTaskWrapper.class);
+            addToDbInfoStart(id);
             return new ResponseEntity<>(task, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -83,6 +95,7 @@ public class QuestionTaskService {
         }
         if(GeneralSettings.VIDEO_TASK_TYPE.equals(entity.getType())){
             QuestionTaskWrapper task = JsonClassParser.getObject(entity.getTask(), QuestionTaskWrapper.class);
+            addToDbInfoStart(id);
             return new ResponseEntity<>(task, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -107,7 +120,8 @@ public class QuestionTaskService {
         if(entity == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        if(!entity.getType().equalsIgnoreCase(GeneralSettings.QUESTION_TASK_TYPE)){
+        if(!(entity.getType().equalsIgnoreCase(GeneralSettings.QUESTION_TASK_TYPE)
+                || entity.getType().equalsIgnoreCase(GeneralSettings.GRAMMAR_TASK_TYPE))){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
@@ -128,7 +142,11 @@ public class QuestionTaskService {
             }
         }
         //TODO: update data in DB
-        QuestionResult result = new QuestionResult(totalScore, score, correct);
+        User current = addToDbInfoCheck(id, totalScore, score);
+        if(current == null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        QuestionResult result = new QuestionResult(totalScore, score, correct, current.getRaiting());
         return new ResponseEntity<>(result, HttpStatus.OK);
 
     }
@@ -171,8 +189,77 @@ public class QuestionTaskService {
             }
         }
         //TODO: update data in DB
-        QuestionResult result = new QuestionResult(totalScore, score, correct);
+        User current = addToDbInfoCheck(id, totalScore, score);
+        if(current == null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        QuestionResult result = new QuestionResult(totalScore, score, correct, current.getRaiting());
         return new ResponseEntity<>(result, HttpStatus.OK);
 
+    }
+
+    private User addToDbInfoCheck(Long id, int totalScore, int score) {
+        Optional<User> optUser = userRepository.getCurrentUser();
+        if(!optUser.isPresent()){
+            return null;
+        }
+        User current = optUser.get();
+        TaskEntity taskEntity = taskRepository.findOne(id);
+        if (taskEntity == null) {
+            return null;
+        }
+        Optional<TaskProgressEntity> optTpe= current.getTasks().stream().filter(x -> x.getTask().getId().equals(id)).findAny();
+        if(!optTpe.isPresent()){
+            return null;
+        }
+        TaskProgressEntity tpe = optTpe.get();
+        tpe.setScore(score);
+        tpe.setTotalScore(totalScore);
+        if(tpe.getStatus() == TaskProgressStatus.FIRST){
+            current.setRaiting(current.getRaiting() + (taskEntity.getReward() * score / totalScore));
+            current = userRepository.saveAndFlush(current);
+        }
+        tpe.setStatus(TaskProgressStatus.COMPLETED);
+
+        tpe = taskProgressRepository.saveAndFlush(tpe);
+        return current;
+    }
+
+    private TaskProgressEntity addToDbInfoStart(Long id){
+        Optional<User> optUser = userRepository.getCurrentUser();
+        if(!optUser.isPresent()){
+            return null;
+        }
+        User current = optUser.get();
+        TaskEntity task = taskRepository.findOne(id);
+        if (task == null) {
+            return null;
+        }
+        QuestionTaskAnswerWrapper c1 = JsonClassParser.getObject(task.getAnswer(),
+                QuestionTaskAnswerWrapper.class);
+
+        Optional<TaskProgressEntity> optionalTaskEntity = current.getTasks()
+                .stream()
+                .filter(x -> x.getTask().getId().equals(id))
+                .findAny();
+
+        TaskProgressEntity tpe = null;
+        if(optionalTaskEntity.isPresent()){
+            //User has already executed this task
+            tpe = optionalTaskEntity.get();
+            tpe.setStatus(TaskProgressStatus.IN_PROGRESS);
+
+        }else {
+            //User has not executed this task yet
+            tpe = new TaskProgressEntity(task, TaskProgressStatus.FIRST);
+        }
+        tpe.setScore(0);
+        tpe.setTotalScore(c1.getQa().length);
+        tpe = taskProgressRepository.saveAndFlush(tpe);
+        if(!optionalTaskEntity.isPresent()){
+            current.getTasks().add(tpe);
+        }
+        current = userRepository.saveAndFlush(current);
+        return tpe;
     }
 }

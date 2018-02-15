@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.stream.LongStream;
 
 @Component
 public class ChoosingTranslationTaskService {
@@ -196,7 +195,38 @@ public class ChoosingTranslationTaskService {
     }
 
     public ResponseEntity createBasicTask(BasicTaskWrapper wrapper) {
-        CardWrapper[] array = wrapper.getArray();
+        return addTask(new ChoosingTranslationTaskWrapper(getCardsIds(wrapper.getArray())));
+    }
+
+
+
+    public ResponseEntity createAdvancedTask(AdvancedTaskWrapper wrapper) {
+        //TODO: implements this method
+        return null;
+    }
+
+
+
+
+    public ResponseEntity create(SetWrapper setWrapper){
+        if(!(setWrapper.getType().equals(GeneralSettings.WRITING_TYPE) ||
+                setWrapper.getType().equals(GeneralSettings.CHOOSING_TASK_BASIC_TYPE))){
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+        Optional<User> optUser = userRepository.getCurrentUser();
+        if(!optUser.isPresent()){
+            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        }
+        long[] ids = getCardsIds(setWrapper.getArray());
+        ChoosingTranslationTaskSerializerWrapper c = new ChoosingTranslationTaskSerializerWrapper(ids);
+        byte[] bytes = JsonClassParser.getBytes(c);
+        TaskEntity task = new TaskEntity(setWrapper.getType(), bytes, null,optUser.get(),setWrapper.getName(),
+                setWrapper.getReward(), setWrapper.getMinrate());
+        taskRepository.save(task);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private long[] getCardsIds(CardWrapper[] array){
         List<Long> list = new ArrayList<>();
         for (CardWrapper x : array) {
             Optional<CardEntity> entityOptional = cardRepository.findByWordAndTranslation(x.getWord(), x.getTranslation());
@@ -214,11 +244,6 @@ public class ChoosingTranslationTaskService {
         for (int i = 0; i < list.size(); i++) {
             ids[i] = list.get(i);
         }
-        return addTask(new ChoosingTranslationTaskWrapper(ids));
-    }
-
-    public ResponseEntity createAdvancedTask(AdvancedTaskWrapper wrapper) {
-        //TODO: implements this method
-        return null;
+        return ids;
     }
 }

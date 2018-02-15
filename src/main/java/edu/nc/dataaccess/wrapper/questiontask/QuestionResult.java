@@ -4,14 +4,16 @@ public class QuestionResult {
     private Integer totalScore;
     private Integer score;
     private QuestionTaskAnswerWrapper answers;
+    private Integer rating;
 
     public QuestionResult() {
     }
 
-    public QuestionResult(Integer totalScore, Integer score, QuestionTaskAnswerWrapper answers) {
+    public QuestionResult(Integer totalScore, Integer score, QuestionTaskAnswerWrapper answers, Integer rating) {
         this.totalScore = totalScore;
         this.score = score;
         this.answers = answers;
+        this.rating = rating;
     }
 
     public Integer getTotalScore() {
@@ -36,5 +38,13 @@ public class QuestionResult {
 
     public void setAnswers(QuestionTaskAnswerWrapper answers) {
         this.answers = answers;
+    }
+
+    public Integer getRating() {
+        return rating;
+    }
+
+    public void setRating(Integer rating) {
+        this.rating = rating;
     }
 }

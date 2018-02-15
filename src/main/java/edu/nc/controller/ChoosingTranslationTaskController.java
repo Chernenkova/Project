@@ -55,4 +55,9 @@ public class ChoosingTranslationTaskController {
         return service.createAdvancedTask(wrapper);
     }
 
+    @RequestMapping(method = RequestMethod.POST, value = "/create")
+    public ResponseEntity create(@RequestBody SetWrapper setWrapper){
+        return service.create(setWrapper);
+    }
+
 }

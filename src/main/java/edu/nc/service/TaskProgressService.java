@@ -81,7 +81,11 @@ public class TaskProgressService {
             int reward = x.getReward();
             boolean completed = false;
             if (tpe.isPresent()) {
-                reward = (int) Math.ceil((double) x.getReward() / 10);
+                if(tpe.get().getTask().getType().equals(GeneralSettings.WRITING_TYPE)){
+                    reward = (int) Math.ceil((double) x.getReward() / 10);
+                }else {
+                    reward = 0;
+                }
                 completed = true;
             }
             return new TaskInfoWrapper(x.getName(), x.getType(), reward, x.getId(), completed);
