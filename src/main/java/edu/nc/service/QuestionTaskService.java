@@ -3,7 +3,9 @@ package edu.nc.service;
 
 import edu.nc.common.GeneralSettings;
 import edu.nc.dataaccess.entity.TaskEntity;
+import edu.nc.dataaccess.entity.User;
 import edu.nc.dataaccess.repository.TaskRepository;
+import edu.nc.dataaccess.repository.UserRepository;
 import edu.nc.dataaccess.wrapper.questiontask.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,9 +21,11 @@ public class QuestionTaskService {
 
 
     private TaskRepository taskRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    public QuestionTaskService(TaskRepository taskRepository) {
+    public QuestionTaskService(TaskRepository taskRepository, UserRepository userRepository) {
+        this.userRepository = userRepository;
         this.taskRepository = taskRepository;
     }
 
@@ -37,7 +41,7 @@ public class QuestionTaskService {
             qArray[i] = new QuestionWrapper(UUID.randomUUID().toString(), wrapper.getQuestions()[i].getQuestion(),
                     wrapper.getQuestions()[i].getPossibleAnswers());
         }
-        QuestionTaskWrapper questionTaskWrapper = new QuestionTaskWrapper(wrapper.getText(),qArray);
+        QuestionTaskWrapper questionTaskWrapper = new QuestionTaskWrapper(wrapper.getName(), wrapper.getText(),qArray);
         byte[] taskBytes = JsonClassParser.getBytes(questionTaskWrapper);
 
         QuestionWithAnswerWrapper[] array = wrapper.getQuestions();
@@ -46,9 +50,8 @@ public class QuestionTaskService {
             qaArray[i] = new QuestionAnswerWrapper(qArray[i].getQuestionUUID(), array[i].getAnswer());
         }
         byte[] answerBytes = JsonClassParser.getBytes(new QuestionTaskAnswerWrapper(qaArray));
-
-        TaskEntity task = new TaskEntity(type, taskBytes, answerBytes,null,
-                "",wrapper.getReward() * wrapper.getQuestions().length,0);
+        TaskEntity task = new TaskEntity(type, taskBytes, answerBytes, userRepository.findFirstByUserId(wrapper.getAuthorId()),
+                wrapper.getName(),wrapper.getReward() * wrapper.getQuestions().length, wrapper.getMinCost());
         taskRepository.saveAndFlush(task);
         return new ResponseEntity(HttpStatus.OK);
     }
