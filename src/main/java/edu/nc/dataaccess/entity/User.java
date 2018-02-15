@@ -4,6 +4,7 @@ import edu.nc.dataaccess.model.security.Authority;
 import edu.nc.dataaccess.model.security.AuthorityName;
 import edu.nc.dataaccess.model.security.UserEnterWrapper;
 import edu.nc.dataaccess.model.security.UserWrapper;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -65,7 +66,7 @@ public class User {
 
     public User(UserWrapper userWrapper, Authority authority) {
         this.username = userWrapper.getUsername();
-        this.userPassword = userWrapper.getUserPassword();
+        this.userPassword = DigestUtils.md5Hex(userWrapper.getUserPassword());
         this.firstnameBytes = userWrapper.getUserFirstname().getBytes();
         this.lastnameBytes = userWrapper.getUserLastname().getBytes();
         this.raiting = 0;

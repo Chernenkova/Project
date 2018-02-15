@@ -20,6 +20,7 @@ import edu.nc.security.JwtUserDetails;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
@@ -93,7 +94,7 @@ public class UserService {
                                                          UserDetailsService userDetailsService) {
         Long id = ((JwtUser) userDetailsService.loadUserByUsername(userEnterWrapper.getUsername())).getId();
         User user = getUser(id).getBody();
-        if (user.getUserPassword().equals(userEnterWrapper.getUserPassword())) {
+        if (user.getUserPassword().equals(DigestUtils.md5Hex(userEnterWrapper.getUserPassword()))) {
             return new ResponseEntity<>(new TokenWrapper(getToken(user)), HttpStatus.OK);
         } else
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);

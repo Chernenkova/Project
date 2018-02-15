@@ -80,7 +80,7 @@ public class RecoverPasswordService {
                 User user = userRepository.findByUsername(current.getUsername());
                 if (user != null) {
                     //TODO add MD5 hash function
-                    user.setUserPassword(wrapper.getPassword());
+                    user.setUserPassword(DigestUtils.md5Hex(wrapper.getPassword()));
                     user.setLastPasswordResetDate(new Date());
                     userRepository.saveAndFlush(user);
                     recoverRepository.delete(current);
