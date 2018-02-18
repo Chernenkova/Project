@@ -1,9 +1,6 @@
 package edu.nc.service;
 
-import edu.nc.dataaccess.entity.CardEntity;
-import edu.nc.dataaccess.entity.TaskEntity;
-import edu.nc.dataaccess.entity.TaskProgressEntity;
-import edu.nc.dataaccess.entity.User;
+import edu.nc.dataaccess.entity.*;
 import edu.nc.dataaccess.repository.CardRepository;
 import edu.nc.dataaccess.repository.TaskProgressRepository;
 import edu.nc.dataaccess.repository.TaskRepository;
@@ -41,10 +38,29 @@ public class WritingService {
 
 
     public ResponseEntity getTask(Long id){
+        Optional<User> optUser = userRepository.getCurrentUser();
+        if(!optUser.isPresent()){
+            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        }
+        User current = optUser.get();
+        Optional<TaskProgressEntity> optTpe = current.getTasks().stream().filter(x -> x.getTask().getId().equals(id)).findAny();
+        TaskProgressEntity tpe = null;
+
         TaskEntity entity = taskRepository.findOne(id);
         if(entity == null){
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
+        if(optTpe.isPresent()){
+            tpe.setStatus(TaskProgressStatus.IN_PROGRESS);
+            tpe = taskProgressRepository.saveAndFlush(tpe);
+        }else {
+            tpe = new TaskProgressEntity(entity, TaskProgressStatus.FIRST);
+            tpe = taskProgressRepository.saveAndFlush(tpe);
+            current.getTasks().add(tpe);
+            current = userRepository.saveAndFlush(current);
+        }
+
+
         ChoosingTranslationTaskSerializerWrapper cttsw = JsonClassParser.getObject(entity.getTask(),
                 ChoosingTranslationTaskSerializerWrapper.class);
         long[] array = cttsw.getCardsIds();
