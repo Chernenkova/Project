@@ -112,20 +112,25 @@ public class TaskProgressService {
 
         int currentRating = current.getRaiting();
         int increase = 0;
-        if(optional.isPresent()){
-            tpe = optional.get();
-            increase += Math.ceil((double)task.getReward() / 10);
 
-        } else {
-            tpe = new TaskProgressEntity(task, TaskProgressStatus.COMPLETED);
-            tpe = taskProgressRepository.save(tpe);
-            increase += task.getReward();
-            current.getTasks().add(tpe);
+        if(!optional.isPresent()){
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
-        if(tpe.getTask().getType().equalsIgnoreCase("CHOOSING")) {
+        tpe = optional.get();
+        if(tpe.getStatus() == TaskProgressStatus.FIRST){
+            increase = tpe.getTask().getReward();
+        }else if (tpe.getTask().getType().equals(GeneralSettings.WRITING_TYPE)){
+            increase = (int) Math.ceil((double)task.getReward() / 10);
+        }
+        if(tpe.getTask().getType().equals(GeneralSettings.CHOOSING_TASK_BASIC_TYPE) ||
+            tpe.getTask().getType().equals(GeneralSettings.VIDEO_TASK_TYPE ) ||
+            tpe.getTask().getType().equals(GeneralSettings.GRAMMAR_TASK_TYPE) ||
+            tpe.getTask().getType().equals(GeneralSettings.QUESTION_TASK_TYPE)){
             increase *= tpe.getScore();
             increase = (int) Math.ceil((double)increase / tpe.getTotalScore());
         }
+        tpe.setStatus(TaskProgressStatus.COMPLETED);
+        tpe = taskProgressRepository.saveAndFlush(tpe);
         currentRating += increase;
 
         current.setRaiting(currentRating);
