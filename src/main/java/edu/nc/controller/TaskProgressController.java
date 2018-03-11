@@ -23,14 +23,13 @@ public class TaskProgressController {
         this.taskProgressService = taskProgressService;
     }
 
-
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<TaskInfoWrapper[]> getAvailableAssignments(){
-       return taskProgressService.getAvailableAssignments();
+    public ResponseEntity<TaskInfoWrapper[]> getAvailableAssignments() {
+        return taskProgressService.getAvailableAssignments();
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/{id}")
-    public ResponseEntity completeTask(@PathVariable Long id){
+    public ResponseEntity completeTask(@PathVariable Long id) {
         return taskProgressService.completeTask(id);
     }
 }

@@ -2,7 +2,6 @@ package edu.nc.service;
 
 import edu.nc.dataaccess.entity.User;
 import edu.nc.dataaccess.repository.RecoverRepository;
-import edu.nc.common.GeneralSettings;
 import edu.nc.dataaccess.entity.RecoverEntity;
 import edu.nc.dataaccess.repository.UserRepository;
 import edu.nc.dataaccess.wrapper.recoverpasswordwrappers.EmailWrapper;
@@ -23,7 +22,7 @@ public class RecoverPasswordService {
     private final String RECOVERING_MESSAGE =
             "Link to recover your password is bellow.\n" +
                     "If You did not make this request, just ignore this message\n";
-    private final String RECOVER_CONFIRM_REQUEST_HTTP = "http://localhost:4200/recover/";
+    private final String RECOVER_CONFIRM_REQUEST_HTTP = "http://81.5.107.9/recover/";
     private final String RECOVERING_THEME = "recovering password";
     private final long TIME_TO_VALIDITY = 1000 * 3600 * 3;
 
@@ -38,9 +37,10 @@ public class RecoverPasswordService {
 
     /**
      * finds user by username (email) and adds it into DB and send an email notification
-     * @see RecoverEntity
+     *
      * @param wrapper contains email string
      * @return OK status
+     * @see RecoverEntity
      */
     public ResponseEntity requestOnRecovering(EmailWrapper wrapper) {
         User user = userRepository.findByUsername(wrapper.getEmail());
@@ -48,7 +48,6 @@ public class RecoverPasswordService {
             //Such user exists
             Optional<RecoverEntity> current = recoverRepository.findByUsername(user.getUsername());
             RecoverEntity entity;
-            //TODO: create more unique string
             String secretString = user.getUsername().hashCode() + "-" + UUID.randomUUID().toString();
             if (current.isPresent()) {
                 //This user has already requested on recovering password
@@ -68,6 +67,7 @@ public class RecoverPasswordService {
 
     /**
      * checks the validity of request on recover using UUID and recovers password
+     *
      * @param wrapper contains password string
      * @param uuid    - path variable in request. unique for every person
      * @return OK status
@@ -79,7 +79,6 @@ public class RecoverPasswordService {
             if (new Date().getTime() - current.getDate().getTime() < TIME_TO_VALIDITY) {
                 User user = userRepository.findByUsername(current.getUsername());
                 if (user != null) {
-                    //TODO add MD5 hash function
                     user.setUserPassword(DigestUtils.md5Hex(wrapper.getPassword()));
                     user.setLastPasswordResetDate(new Date());
                     userRepository.saveAndFlush(user);
@@ -87,7 +86,7 @@ public class RecoverPasswordService {
                     return new ResponseEntity(HttpStatus.OK);
 
                 }
-            }else{
+            } else {
                 //TODO: removing. Timeout
             }
         }

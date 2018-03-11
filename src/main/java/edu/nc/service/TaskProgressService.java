@@ -1,7 +1,6 @@
 package edu.nc.service;
 
 
-import com.sun.istack.internal.Nullable;
 import edu.nc.common.GeneralSettings;
 import edu.nc.dataaccess.entity.TaskEntity;
 import edu.nc.dataaccess.entity.TaskProgressEntity;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Component
 public class TaskProgressService {
@@ -44,27 +42,8 @@ public class TaskProgressService {
         List<TaskEntity> tasks = taskRepository.findAllByMinCostIsLessThanEqualAndTypeIsNotLike(user.getRaiting(), GeneralSettings.DICTIONARY_TYPE);
         List<TaskProgressEntity> completedTasks = user.getTasks();
 
-        //TODO: completed tasks
-//        tasks = tasks.stream().peek(x -> {
-//            Optional<TaskProgressEntity> tpe = completedTasks.stream().filter(y -> y.getTask().getId().equals(x.getId())).findAny();
-//            if(tpe.isPresent()) {
-//                x.setReward((int) Math.ceil((double)x.getReward() / 10));
-//            }
-//        }).collect(Collectors.toList());
-//        tasks.sort((taskEntity, t1) -> t1.getReward() - taskEntity.getReward());
-//
-//        return new ResponseEntity<>(getFromList(tasks), HttpStatus.OK);
         return new ResponseEntity<>(getTaskInfo(tasks, completedTasks), HttpStatus.OK);
     }
-
-
-//    private @Nullable User getCurrentUser() {
-//        String login = JwtUserDetails.getUserName();
-//        if(login == null){
-//            return null;
-//        }
-//        return userRepository.findByUsername(login);
-//    }
 
     private TaskInfoWrapper[] getFromList(List<TaskEntity> taskEntityList) {
         TaskInfoWrapper[] array = new TaskInfoWrapper[taskEntityList.size()];
@@ -81,9 +60,9 @@ public class TaskProgressService {
             int reward = x.getReward();
             boolean completed = false;
             if (tpe.isPresent()) {
-                if(tpe.get().getTask().getType().equals(GeneralSettings.WRITING_TYPE)){
+                if (GeneralSettings.WRITING_TYPE.equals(tpe.get().getTask().getType())) {
                     reward = (int) Math.ceil((double) x.getReward() / 10);
-                }else {
+                } else {
                     reward = 0;
                 }
                 completed = true;
@@ -92,17 +71,17 @@ public class TaskProgressService {
         }).sorted((taskEntity, t1) -> t1.getReward() - taskEntity.getReward()).toArray(TaskInfoWrapper[]::new);
     }
 
-    public ResponseEntity completeTask(Long id){
+    public ResponseEntity completeTask(Long id) {
         return completeTask(id, userRepository, taskRepository, taskProgressRepository);
     }
 
     public static ResponseEntity completeTask(Long id,
                                               UserRepository userRepository,
                                               TaskRepository taskRepository,
-                                              TaskProgressRepository taskProgressRepository){
+                                              TaskProgressRepository taskProgressRepository) {
         User current = userRepository.findByUsername(JwtUserDetails.getUserName());
         TaskEntity task = taskRepository.findOne(id);
-        if(current == null || task == null){
+        if (current == null || task == null) {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
 
@@ -113,21 +92,21 @@ public class TaskProgressService {
         int currentRating = current.getRaiting();
         int increase = 0;
 
-        if(!optional.isPresent()){
+        if (!optional.isPresent()) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
         tpe = optional.get();
-        if(tpe.getStatus() == TaskProgressStatus.FIRST){
+        if (tpe.getStatus() == TaskProgressStatus.FIRST) {
             increase = tpe.getTask().getReward();
-        }else if (tpe.getTask().getType().equals(GeneralSettings.WRITING_TYPE)){
-            increase = (int) Math.ceil((double)task.getReward() / 10);
+        } else if (GeneralSettings.WRITING_TYPE.equals(tpe.getTask().getType())) {
+            increase = (int) Math.ceil((double) task.getReward() / 10);
         }
-        if(tpe.getTask().getType().equals(GeneralSettings.CHOOSING_TASK_BASIC_TYPE) ||
-            tpe.getTask().getType().equals(GeneralSettings.VIDEO_TASK_TYPE ) ||
-            tpe.getTask().getType().equals(GeneralSettings.GRAMMAR_TASK_TYPE) ||
-            tpe.getTask().getType().equals(GeneralSettings.QUESTION_TASK_TYPE)){
+        if (GeneralSettings.CHOOSING_TASK_BASIC_TYPE.equals(tpe.getTask().getType()) ||
+                GeneralSettings.VIDEO_TASK_TYPE.equals(tpe.getTask().getType()) ||
+                GeneralSettings.GRAMMAR_TASK_TYPE.equals(tpe.getTask().getType()) ||
+                GeneralSettings.QUESTION_TASK_TYPE.equals(tpe.getTask().getType())) {
             increase *= tpe.getScore();
-            increase = (int) Math.ceil((double)increase / tpe.getTotalScore());
+            increase = (int) Math.ceil((double) increase / tpe.getTotalScore());
         }
         tpe.setStatus(TaskProgressStatus.COMPLETED);
         tpe = taskProgressRepository.saveAndFlush(tpe);

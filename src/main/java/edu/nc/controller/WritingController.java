@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = GeneralSettings.TASK_WRITING)
 public class WritingController {
 
-
     private WritingService writingService;
 
     @Autowired
@@ -21,11 +20,9 @@ public class WritingController {
         this.writingService = writingService;
     }
 
-
     @RequestMapping(method = RequestMethod.GET, value = "/{id}")
-    public ResponseEntity getTaskRuss(@PathVariable Long id){
+    public ResponseEntity getTaskRuss(@PathVariable Long id) {
         return writingService.getTask(id);
     }
-
 
 }

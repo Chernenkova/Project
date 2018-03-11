@@ -43,7 +43,7 @@ public class UserService {
 
     private static final String REGISTRATION_THEME = "Registration";
 
-    private static final String DOMAIN_FRONT = "http://localhost:4200/confirm-registration/";
+    private static final String DOMAIN_FRONT = "http://81.5.107.9/confirm-registration/";
 
     private static final long DELAY_TO_CONFIRM = 1000 * 3600 * 3;
 
@@ -75,19 +75,19 @@ public class UserService {
     public ResponseEntity<User> createUser(UserWrapper userWrapper) {
         Optional<Authority> optionalAuthority = authorityRepository.findByName(AuthorityName.ROLE_USER);
         Authority currentAuthority;
-        if(!optionalAuthority.isPresent()){
+        if (!optionalAuthority.isPresent()) {
             Authority authority = new Authority();
             authority.setName(AuthorityName.ROLE_USER);
             authority.setUsers(new ArrayList<>());
             currentAuthority = authorityRepository.saveAndFlush(authority);
-        }else {
+        } else {
             currentAuthority = optionalAuthority.get();
         }
         User newUser = new User(userWrapper, currentAuthority);
         newUser = userRepository.save(newUser);
 
 
-        return new ResponseEntity<>( HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     public ResponseEntity<TokenWrapper> authenticateUser(UserEnterWrapper userEnterWrapper,
@@ -108,7 +108,7 @@ public class UserService {
         return new ResponseEntity<>(currentUser, HttpStatus.OK);
     }
 
-    private String getToken(User user){
+    private String getToken(User user) {
 
         String token = "\"name\" : \"" + user.getFirstname() + "\", " + "\"raiting\" : \"" + user.getRaiting() + "\"" +
                 "\"id\" : \"" + user.getUserId() + "\"";
@@ -123,8 +123,7 @@ public class UserService {
             JwtBuilder jwtBuilder = Jwts.builder();
             jwtBuilder.setClaims(tokenData);
             token += jwtBuilder.signWith(SignatureAlgorithm.HS512, secret).compact();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             System.out.println("Error");
         }
         System.out.println(token);
@@ -133,14 +132,15 @@ public class UserService {
 
     /**
      * adds the entry into DB and send the E'mail on login
+     *
      * @param wrapper - contains email and password to create Entity
      * @return -    BAD_REQUEST, if e-mail pattern is incorrect
-     *              OK
+     * OK
      */
-    public ResponseEntity registerUser(LoginAndPassword wrapper){
+    public ResponseEntity registerUser(LoginAndPassword wrapper) {
         Pattern p = Pattern.compile(EMAIL_REGULAR_EXPRESSION);
         Matcher m = p.matcher(wrapper.getLogin());
-        if(!m.matches()){
+        if (!m.matches()) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
         //find the same entry
@@ -164,17 +164,17 @@ public class UserService {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    public ResponseEntity confirmRegistration(String uuid, PersonalData wrapper){
+    public ResponseEntity confirmRegistration(String uuid, PersonalData wrapper) {
         Optional<RegUserEntity> optionalRegUserEntity = registrationRepository.findByUuid(uuid);
-        if(!optionalRegUserEntity.isPresent()){
+        if (!optionalRegUserEntity.isPresent()) {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
         RegUserEntity current = optionalRegUserEntity.get();
-        if(new Date().getTime() - current.getDate().getTime() > DELAY_TO_CONFIRM){
+        if (new Date().getTime() - current.getDate().getTime() > DELAY_TO_CONFIRM) {
             return new ResponseEntity(HttpStatus.REQUEST_TIMEOUT);
         }
         registrationRepository.delete(current.getId());
-        return this.createUser(new UserWrapper( current.getLogin(),
+        return this.createUser(new UserWrapper(current.getLogin(),
                 current.getPasswordHash(),
                 wrapper.getUserFirstname(),
                 wrapper.getUserLastname(),
@@ -185,18 +185,18 @@ public class UserService {
         return new Date(createdDate.getTime() + expiration * 1000);
     }
 
-    public ResponseEntity<LoginNameLastNameWrapper> getUserData(){
+    public ResponseEntity<LoginNameLastNameWrapper> getUserData() {
         User current = userRepository.findByUsername(JwtUserDetails.getUserName());
         return new ResponseEntity<>(new LoginNameLastNameWrapper(current.getUsername(),
                 current.getFirstname(), current.getLastname()), HttpStatus.OK);
     }
 
 
-    public ResponseEntity isAdmin(){
+    public ResponseEntity isAdmin() {
         User current = userRepository.findByUsername(JwtUserDetails.getUserName());
         List<Authority> authorities = current.getAuthorities();
         for (Authority x : authorities) {
-            if(x.getName() == AuthorityName.ROLE_ADMIN){
+            if (AuthorityName.ROLE_ADMIN == x.getName()) {
                 return new ResponseEntity<>(Boolean.TRUE, HttpStatus.OK);
             }
         }

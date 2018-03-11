@@ -50,13 +50,8 @@ public class ChoosingTranslationTaskController {
         return service.createBasicTask(wrapper);
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/create/advanced")
-    public ResponseEntity createAdvancedTask(@RequestBody AdvancedTaskWrapper wrapper) {
-        return service.createAdvancedTask(wrapper);
-    }
-
     @RequestMapping(method = RequestMethod.POST, value = "/create")
-    public ResponseEntity create(@RequestBody SetWrapper setWrapper){
+    public ResponseEntity create(@RequestBody SetWrapper setWrapper) {
         return service.create(setWrapper);
     }
 

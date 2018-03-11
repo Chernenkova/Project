@@ -5,7 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface RegistrationRepository extends JpaRepository<RegUserEntity, Long>{
-    public Optional<RegUserEntity> findByLogin(String login);
-    public Optional<RegUserEntity> findByUuid(String uuid);
+public interface RegistrationRepository extends JpaRepository<RegUserEntity, Long> {
+    Optional<RegUserEntity> findByLogin(String login);
+
+    Optional<RegUserEntity> findByUuid(String uuid);
 }

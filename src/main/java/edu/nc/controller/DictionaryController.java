@@ -22,9 +22,8 @@ public class DictionaryController {
     }
 
 
-
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<CardWrapper[]> get(){
+    public ResponseEntity<CardWrapper[]> get() {
         return dictionaryService.get();
     }
 
@@ -34,7 +33,7 @@ public class DictionaryController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/delete")
-    public ResponseEntity<CardWrapper[]> delete(@RequestBody CardWrapper[] array){
+    public ResponseEntity<CardWrapper[]> delete(@RequestBody CardWrapper[] array) {
 
         return dictionaryService.delete(array);
     }

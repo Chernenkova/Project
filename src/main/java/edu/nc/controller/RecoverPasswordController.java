@@ -20,14 +20,13 @@ public class RecoverPasswordController {
         this.recoverPasswordService = recoverPasswordService;
     }
 
-
     @RequestMapping(value = "/request", method = RequestMethod.POST)
-    public ResponseEntity requestOnRecovering(@RequestBody EmailWrapper wrapper){
+    public ResponseEntity requestOnRecovering(@RequestBody EmailWrapper wrapper) {
         return recoverPasswordService.requestOnRecovering(wrapper);
     }
 
-    @RequestMapping(value = GeneralSettings.RECOVER_CONFIRM +"/{string}", method = RequestMethod.POST)
-    public ResponseEntity recoverPassword(@RequestBody PasswordWrapper wrapper, @PathVariable String string){
+    @RequestMapping(value = GeneralSettings.RECOVER_CONFIRM + "/{string}", method = RequestMethod.POST)
+    public ResponseEntity recoverPassword(@RequestBody PasswordWrapper wrapper, @PathVariable String string) {
         return recoverPasswordService.recoverPassword(wrapper, string);
     }
 }

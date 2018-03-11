@@ -5,11 +5,9 @@ import edu.nc.dataaccess.entity.CardEntity;
 import edu.nc.service.CardService;
 import edu.nc.dataaccess.wrapper.cardtask.CardWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = GeneralSettings.CARD_CONTROLLER)
@@ -35,6 +33,15 @@ public class CardController {
     @RequestMapping(method = RequestMethod.PUT)
     public ResponseEntity<CardEntity[]> addCards(@RequestBody CardWrapper[] wrapper) {
         return service.addCards(wrapper);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/filtered")
+    public ResponseEntity<Page<CardEntity>> getAllFromPage(@RequestParam int page,
+                                                           @RequestParam int size,
+                                                           @RequestParam(defaultValue = "ASC") String direction,
+                                                           @RequestParam(defaultValue = "word") String active,
+                                                           @RequestParam(defaultValue = "") String filter) {
+        return service.getAllFromPage(page, size, direction, active, filter);
     }
 
 }

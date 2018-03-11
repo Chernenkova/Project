@@ -45,7 +45,7 @@ public class UserController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getUserData")
-    public ResponseEntity<LoginNameLastNameWrapper> getUserData(){
+    public ResponseEntity<LoginNameLastNameWrapper> getUserData() {
         return userService.getUserData();
     }
 
@@ -75,22 +75,22 @@ public class UserController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/register")
-    public ResponseEntity registerUser(@RequestBody LoginAndPassword wrapper){
+    public ResponseEntity registerUser(@RequestBody LoginAndPassword wrapper) {
         return userService.registerUser(wrapper);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/confirm/{uuid}")
-    public ResponseEntity confirmRegistration(@PathVariable String uuid, @RequestBody PersonalData wrapper){
+    public ResponseEntity confirmRegistration(@PathVariable String uuid, @RequestBody PersonalData wrapper) {
         return userService.confirmRegistration(uuid, wrapper);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getUser{id}")
-    public ResponseEntity getUser(@PathVariable String id){
+    public ResponseEntity getUser(@PathVariable String id) {
         return userService.getUser(Long.parseLong(id));
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/isAdmin")
-    public ResponseEntity getRole(){
+    public ResponseEntity getRole() {
         return userService.isAdmin();
     }
 

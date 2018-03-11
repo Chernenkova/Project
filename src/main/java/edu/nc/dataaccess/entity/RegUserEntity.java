@@ -1,8 +1,5 @@
 package edu.nc.dataaccess.entity;
 
-import org.apache.commons.codec.digest.DigestUtils;
-
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -22,8 +19,6 @@ public class RegUserEntity {
 
     public RegUserEntity(String login, String password) {
         this.login = login;
-        //TODO: create HASH
-        //this.passwordHash = DigestUtils.md5Hex(password);
         this.passwordHash = password;
         this.date = new Date();
         this.uuid = "reg01WK-" + UUID.randomUUID().toString();

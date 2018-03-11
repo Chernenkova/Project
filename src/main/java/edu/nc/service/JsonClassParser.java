@@ -7,8 +7,25 @@ import java.io.IOException;
 
 public class JsonClassParser {
 
-    public static byte[] getBytes(Object o) {
-        ObjectMapper mapper = new ObjectMapper();
+    private static volatile JsonClassParser instance;
+    private ObjectMapper mapper;
+
+    private JsonClassParser() {
+        mapper = new ObjectMapper();
+    }
+
+    public static JsonClassParser getInstance() {
+        if (null == instance) {
+            synchronized (JsonClassParser.class) {
+                if (null == instance) {
+                    instance = new JsonClassParser();
+                }
+            }
+        }
+        return instance;
+    }
+
+    public byte[] getBytes(Object o) {
         try {
             return mapper.writeValueAsBytes(o);
         } catch (JsonProcessingException e) {
@@ -17,8 +34,7 @@ public class JsonClassParser {
         return null;
     }
 
-    public static <T> T getObject(byte[] bytes, Class<T> clazz) {
-        ObjectMapper mapper = new ObjectMapper();
+    public <T> T getObject(byte[] bytes, Class<T> clazz) {
         try {
             return mapper.readValue(bytes, clazz);
         } catch (IOException e) {

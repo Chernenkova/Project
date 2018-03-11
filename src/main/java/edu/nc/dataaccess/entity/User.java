@@ -1,8 +1,6 @@
 package edu.nc.dataaccess.entity;
 
 import edu.nc.dataaccess.model.security.Authority;
-import edu.nc.dataaccess.model.security.AuthorityName;
-import edu.nc.dataaccess.model.security.UserEnterWrapper;
 import edu.nc.dataaccess.model.security.UserWrapper;
 import org.apache.commons.codec.digest.DigestUtils;
 

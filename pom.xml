@@ -3,25 +3,23 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.zerhusen</groupId>
-    <artifactId>jwt-spring-security-demo</artifactId>
-    <version>0.2.0</version>
+    <groupId>ru.ncedu</groupId>
+    <artifactId>happy-english</artifactId>
+    <version>0.0.1</version>
     <packaging>jar</packaging>
 
-    <name>jwt-spring-security-demo</name>
-    <description>Demo project for JWT with Spring Boot and Spring Security</description>
+    <name>Happy English</name>
+    <description>Online service of learning English for Russia native speakers</description>
 
-    <licenses>
-        <license>
-            <name>MIT license</name>
-            <url>https://raw.githubusercontent.com/szerhusenBC/jwt-spring-security-demo/master/LICENSE</url>
-        </license>
-    </licenses>
+
 
     <developers>
         <developer>
-            <name>Stephan Zerhusen</name>
-            <email>stephan.zerhusen@gmail.com</email>
+            <name>Alexander Zubkov</name>
+            <email>zubkov.as@phystech.edu</email>
+        </developer>
+        <developer>
+            <name>Elena Chernenkova</name>
         </developer>
     </developers>
 

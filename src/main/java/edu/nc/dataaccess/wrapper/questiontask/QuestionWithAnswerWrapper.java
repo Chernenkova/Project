@@ -1,6 +1,6 @@
 package edu.nc.dataaccess.wrapper.questiontask;
 
-public class QuestionWithAnswerWrapper{
+public class QuestionWithAnswerWrapper {
     private String answer;
     private String question;
     private String[] possibleAnswers;

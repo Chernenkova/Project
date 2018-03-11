@@ -15,7 +15,7 @@ public class SendEmail {
 
     private Message message = null;
     protected static String SMTP_SERVER = null;
-    protected static String SMTP_Port = null;
+    protected static String SMTP_PORT = null;
     protected static String SMTP_AUTH_USER = null;
     protected static String SMTP_AUTH_PWD = null;
     protected static String EMAIL_FROM = null;
@@ -29,7 +29,7 @@ public class SendEmail {
             Properties pr = new Properties();
             pr.load(reader);
             SendEmail.SMTP_SERVER = pr.getProperty("server");
-            SendEmail.SMTP_Port = pr.getProperty("port");
+            SendEmail.SMTP_PORT = pr.getProperty("port");
             SendEmail.EMAIL_FROM = pr.getProperty("from");
             SendEmail.SMTP_AUTH_USER = pr.getProperty("user");
             SendEmail.SMTP_AUTH_PWD = pr.getProperty("pass");
@@ -48,7 +48,7 @@ public class SendEmail {
 
         Properties properties = new Properties();
         properties.put("mail.smtp.host", SMTP_SERVER);
-        properties.put("mail.smtp.port", SMTP_Port);
+        properties.put("mail.smtp.port", SMTP_PORT);
         properties.put("mail.smtp.auth", "true");
         properties.put("mail.smtp.ssl.enable", "true");
         properties.put("mail.smtp.socketFactory.class",
@@ -59,16 +59,16 @@ public class SendEmail {
             Session session = Session.getDefaultInstance(properties, auth);
             session.setDebug(false);
 
-            InternetAddress email_from = new InternetAddress(EMAIL_FROM);
-            InternetAddress email_to = new InternetAddress(emailTo);
-            InternetAddress reply_to = (REPLY_TO != null) ?
+            InternetAddress emailFrom = new InternetAddress(EMAIL_FROM);
+            InternetAddress internetAddressTo = new InternetAddress(emailTo);
+            InternetAddress replyTo = (REPLY_TO != null) ?
                     new InternetAddress(REPLY_TO) : null;
             message = new MimeMessage(session);
-            message.setFrom(email_from);
-            message.setRecipient(Message.RecipientType.TO, email_to);
+            message.setFrom(emailFrom);
+            message.setRecipient(Message.RecipientType.TO, internetAddressTo);
             message.setSubject(thema);
-            if (reply_to != null)
-                message.setReplyTo(new Address[]{reply_to});
+            if (replyTo != null)
+                message.setReplyTo(new Address[]{replyTo});
         } catch (MessagingException e) {
             System.err.println(e.getMessage());
         }
