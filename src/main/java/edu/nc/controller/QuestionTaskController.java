@@ -61,4 +61,10 @@ public class QuestionTaskController {
         return questionTaskService.checkVideo(id, wrapper);
     }
 
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<HttpStatus> delete(@PathVariable Long id){
+        System.out.println("!!!" + id);
+        return questionTaskService.delete(id);
+    }
+
 }

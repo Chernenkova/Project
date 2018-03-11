@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -55,6 +56,17 @@ public class TaskProgressService {
 //
 //        return new ResponseEntity<>(getFromList(tasks), HttpStatus.OK);
         return new ResponseEntity<>(getTaskInfo(tasks, completedTasks), HttpStatus.OK);
+    }
+    public ResponseEntity<TaskInfoWrapper[]> getAll() {
+        Optional<User> opt = userRepository.getCurrentUser();
+        if (!opt.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        //User user = opt.get();
+        List<TaskEntity> tasks = taskRepository.findAll();
+        //List<TaskProgressEntity> completedTasks = user.getTasks();
+
+        return new ResponseEntity<>(getTaskInfo(tasks, new LinkedList<>()), HttpStatus.OK);
     }
 
 

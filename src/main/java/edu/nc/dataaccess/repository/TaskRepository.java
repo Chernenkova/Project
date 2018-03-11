@@ -10,4 +10,5 @@ import java.util.List;
 public interface TaskRepository extends JpaRepository<TaskEntity, Long> {
     TaskEntity findByAuthorAndType(User author, String type);
     List<TaskEntity> findAllByMinCostIsLessThanEqualAndTypeIsNotLike(Integer minCost, String type);
+    List<TaskEntity> findAll();
 }
