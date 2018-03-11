@@ -265,4 +265,9 @@ public class QuestionTaskService {
         current = userRepository.saveAndFlush(current);
         return tpe;
     }
+
+    public ResponseEntity<HttpStatus> delete(Long id){
+        taskRepository.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

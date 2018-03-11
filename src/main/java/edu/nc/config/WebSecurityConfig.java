@@ -93,6 +93,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/cards/**").permitAll()
 //                .antMatchers("/choosing-translation/**").permitAll()
 //                .antMatchers("/questions-text/**").permitAll()
+                .antMatchers("/questions-text/delete/*",
+                        "/task-progress/all",
+                        "/choosing-translation/create",
+                        "/cards",
+                        "/questions-text/create-video",
+                        "/questions-text/create",
+                        "/questions-text/create-grammar").hasRole("ADMIN")
                 .anyRequest().authenticated();
 
         // Custom JWT based security filter
